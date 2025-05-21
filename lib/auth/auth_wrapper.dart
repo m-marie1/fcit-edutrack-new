@@ -16,13 +16,13 @@ class AuthWrapper extends StatelessWidget {
     // Listen to AuthProvider changes
     final authProvider = Provider.of<AuthProvider>(context);
 
-    print(
-        "AuthWrapper build: isLoggedIn=${authProvider.isLoggedIn}, isLoading=${authProvider.isLoading}, userRole=${authProvider.userRole}");
+    // print(
+    //     "AuthWrapper build: isLoggedIn=${authProvider.isLoggedIn}, isLoading=${authProvider.isLoading}, userRole=${authProvider.userRole}");
 
     // Show loading indicator while checking auth state initially or during logout transition
     // Check specifically if currentUser is null while loading to distinguish initial load/logout
     if (authProvider.isLoading && authProvider.currentUser == null) {
-      print("AuthWrapper: Showing loading indicator (initial load/logout)");
+      // print("AuthWrapper: Showing loading indicator (initial load/logout)");
       // Use Scaffold to provide a basic structure during loading
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -30,7 +30,7 @@ class AuthWrapper extends StatelessWidget {
     // If logged in, determine the correct home screen
     if (authProvider.isLoggedIn && authProvider.currentUser != null) {
       final role = authProvider.userRole?.toUpperCase();
-      print("AuthWrapper: User logged in with role $role");
+      // print("AuthWrapper: User logged in with role $role");
       if (role == 'ADMIN') {
         return const AdminHomeScreen();
       } else if (role == 'PROFESSOR') {
@@ -41,7 +41,7 @@ class AuthWrapper extends StatelessWidget {
       }
     } else {
       // If not logged in (or state cleared after logout), show the login/register screen
-      print("AuthWrapper: User not logged in, showing LoginOrRegisterScreen");
+      // print("AuthWrapper: User not logged in, showing LoginOrRegisterScreen");
       return const LoginOrRegisterScreen();
     }
   }

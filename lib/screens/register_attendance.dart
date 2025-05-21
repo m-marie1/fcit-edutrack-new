@@ -6,6 +6,11 @@ import 'package:fci_edutrack/providers/course_provider.dart';
 import 'package:fci_edutrack/providers/attendance_provider.dart';
 import 'package:fci_edutrack/screens/home_screen/my_bottom_nav_bar.dart'; // For navigation
 import '../models/course_model.dart'; // Import Course model
+import 'package:network_info_plus/network_info_plus.dart'; // Import for network info
+import 'package:permission_handler/permission_handler.dart'; // Import for permissions
+import 'dart:io' show Platform; // To check platform
+import 'package:flutter/services.dart'; // For PlatformException
+import 'package:shared_preferences/shared_preferences.dart'; // For reading target BSSID
 
 class RegisterAttendanceScreen extends StatefulWidget {
   static const String routeName = 'register_attendance_screen';
@@ -21,11 +26,38 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
   final bool _isLoading = false;
   String? _error;
   String? _success;
+  String _targetBSSID = '88:QQ:5L:9B:KS:4M'; // Default Target Wi-Fi MAC Address
+  bool _isLoadingBSSID = false; // To manage loading state for BSSID setting
+  bool _isCheckingNetwork = false; // To manage loading state for network check
 
   @override
   void initState() {
     super.initState();
+    _loadTargetBSSID(); // Load custom BSSID on init
     _fetchEnrolledCourses();
+  }
+
+  // Load target BSSID from SharedPreferences
+  Future<void> _loadTargetBSSID() async {
+    setState(() => _isLoadingBSSID = true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final customBSSID = prefs.getString('custom_target_bssid');
+      if (customBSSID != null && customBSSID.isNotEmpty) {
+        _targetBSSID = customBSSID;
+      } else {
+        // Use default if nothing is saved or it's empty
+        _targetBSSID = '88:QQ:5L:9B:KS:4M';
+      }
+    } catch (e) {
+      // Handle error loading preferences, maybe log it
+      print("Error loading target BSSID: $e");
+      _targetBSSID = '88:QQ:5L:9B:KS:4M'; // Fallback to default
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingBSSID = false);
+      }
+    }
   }
 
   void _fetchEnrolledCourses() {
@@ -124,35 +156,202 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
 
   Widget _buildCourseList(BuildContext context, bool isDark,
       List<Course> courses, AttendanceProvider attendanceProvider) {
+    // Reload BSSID when refreshing the list as well
+    final refreshAction = () async {
+      await _loadTargetBSSID(); // Reload BSSID setting
+      await Provider.of<CourseProvider>(context, listen: false)
+          .ensureEnrolledCoursesFetched(); // Fetch courses
+    };
+
     return RefreshIndicator(
-      onRefresh: () => Provider.of<CourseProvider>(context, listen: false)
-          .ensureEnrolledCoursesFetched(),
-      child: ListView.builder(
-        itemCount: courses.length,
-        itemBuilder: (context, index) {
-          final course = courses[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: MyAppColors.primaryColor.withOpacity(0.1),
-                child:
-                    const Icon(Icons.book_outlined, color: MyAppColors.primaryColor),
-              ),
-              title: Text(course.courseName),
-              subtitle: Text(course.courseCode),
-              trailing: const Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                _showCodeEntryDialog(context, course, attendanceProvider);
+      onRefresh: refreshAction,
+      child: _isLoadingBSSID // Show loading indicator while BSSID loads
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: courses.length,
+              itemBuilder: (context, index) {
+                final course = courses[index];
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor:
+                          MyAppColors.primaryColor.withOpacity(0.1),
+                      child: const Icon(Icons.book_outlined,
+                          color: MyAppColors.primaryColor),
+                    ),
+                    title: Text(course.courseName),
+                    subtitle: Text(course.courseCode),
+                    // Show indicator in trailing if checking this specific item (optional enhancement)
+                    // For now, just disable tap globally
+                    trailing: _isCheckingNetwork
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.keyboard_arrow_right),
+                    onTap: _isCheckingNetwork // Disable tap while checking
+                        ? null
+                        : () {
+                            // Check network before showing the code dialog
+                            _checkNetworkAndProceed(
+                                context, course, attendanceProvider);
+                          },
+                  ),
+                );
               },
             ),
-          );
-        },
-      ),
     );
+  }
+
+  // --- Permission Handling ---
+  Future<bool> _requestLocationPermission() async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      // Permissions likely not needed or handled differently on other platforms
+      return true;
+    }
+
+    var status = await Permission.locationWhenInUse.status;
+    if (status.isGranted) {
+      return true;
+    }
+    if (status.isDenied) {
+      // Request permission
+      status = await Permission.locationWhenInUse.request();
+      if (status.isGranted) {
+        return true;
+      }
+    }
+
+    // Handle permanently denied or restricted states
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      // Show a dialog guiding the user to app settings
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Location Permission Required'),
+            content: const Text(
+                'Location permission is needed to verify the Wi-Fi network. Please enable it in app settings.'),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: const Text('Open Settings'),
+                onPressed: () {
+                  openAppSettings(); // Opens app settings
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    }
+    return false; // Default case if not granted
+  }
+
+  // --- Network Check and Code Entry ---
+  void _checkNetworkAndProceed(BuildContext context, Course course,
+      AttendanceProvider attendanceProvider) async {
+    if (_isCheckingNetwork) return; // Prevent concurrent checks
+
+    setState(() {
+      _isCheckingNetwork = true; // Start loading state
+    });
+
+    try {
+      // Wrap the entire logic in try/finally to ensure loading state is reset
+      // 1. Request Permissions First
+      final hasPermission = await _requestLocationPermission();
+      if (!hasPermission) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Location permission is required to check Wi-Fi.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        // No return here, finally block will handle state reset
+      } else {
+        // Only proceed with network check if permission is granted
+        // 2. Perform Network Check (No modal dialog needed)
+        String? currentBSSID;
+        String? errorMessage;
+
+        try {
+          // Ensure Wi-Fi is enabled (NetworkInfo().getWifiBSSID() might return null or throw if Wi-Fi is off)
+          final wifiName =
+              await NetworkInfo().getWifiName(); // A quick check if connected
+          if (wifiName == null) {
+            errorMessage = 'Wi-Fi is not connected or enabled.';
+          } else {
+            // Attempt to get BSSID
+            currentBSSID = await NetworkInfo().getWifiBSSID();
+            if (currentBSSID == null) {
+              errorMessage =
+                  'Could not retrieve Wi-Fi BSSID. Ensure location services are enabled.';
+            }
+          }
+        } on PlatformException catch (e) {
+          errorMessage =
+              'Network check failed: ${e.message}. Ensure location services are enabled.';
+        } catch (e) {
+          // Catch any other unexpected errors
+          errorMessage =
+              'An unexpected error occurred while checking the network: ${e.toString()}';
+        }
+
+        // 3. Handle errors encountered during network check
+        if (errorMessage != null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          // No return here, finally block will handle state reset
+        } else {
+          // 4. Compare BSSID (Case-insensitive) and Proceed
+          if (currentBSSID != null &&
+              currentBSSID.toLowerCase() == _targetBSSID.toLowerCase()) {
+            // Network matches, proceed to code entry dialog
+            if (mounted) {
+              _showCodeEntryDialog(context, course, attendanceProvider);
+            }
+          } else {
+            // Network does not match or BSSID couldn't be retrieved properly
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      'You are not connected to the designated Wi-Fi network ($_targetBSSID). Current: ${currentBSSID ?? "Not Found"}'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+          }
+        }
+      } // End of else block (permission granted)
+    } finally {
+      // Outer finally block
+      // Ensure loading state is always reset
+      if (mounted) {
+        setState(() {
+          _isCheckingNetwork = false;
+        });
+      }
+    }
   }
 
   void _showCodeEntryDialog(BuildContext context, Course course,

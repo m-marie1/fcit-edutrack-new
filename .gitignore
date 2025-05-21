@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# pdfs
+*.pdf
+
+
+
+android/key.properties
+mobsf_security_audit_and_fixes.md

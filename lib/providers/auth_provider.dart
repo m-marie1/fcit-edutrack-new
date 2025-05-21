@@ -20,7 +20,7 @@ class AuthProvider extends ChangeNotifier {
     if (_currentUser == null) {
       await initialize();
     }
-    print("Checking if user is admin. User role: ${_currentUser?.role}");
+    // print("Checking if user is admin. User role: ${_currentUser?.role}");
     // Compare against the full role string from the backend/JWT
     return _currentUser?.role?.toUpperCase() == 'ADMIN'; // Use normalized role
   }
@@ -30,7 +30,7 @@ class AuthProvider extends ChangeNotifier {
     if (_currentUser == null) {
       await initialize();
     }
-    print("Checking if user is professor. User role: ${_currentUser?.role}");
+    // print("Checking if user is professor. User role: ${_currentUser?.role}");
     // Compare against the full role string from the backend/JWT
     return _currentUser?.role?.toUpperCase() ==
         'PROFESSOR'; // Use normalized role
@@ -41,7 +41,7 @@ class AuthProvider extends ChangeNotifier {
     if (_currentUser == null) {
       await initialize();
     }
-    print("Checking if user is student. User role: ${_currentUser?.role}");
+    // print("Checking if user is student. User role: ${_currentUser?.role}");
     // Default to student if no role specified
     return _currentUser?.role == null ||
         _currentUser?.role?.toUpperCase() == 'STUDENT'; // Use normalized role
@@ -72,7 +72,7 @@ class AuthProvider extends ChangeNotifier {
           final decodedToken = JwtDecoder.decode(token);
 
           // Debug the token data
-          print("Token data: ${decodedToken.toString()}");
+          // print("Token data: ${decodedToken.toString()}");
 
           // Try different possible key names for the user ID
           String? userId = decodedToken['sub'] ??
@@ -81,7 +81,7 @@ class AuthProvider extends ChangeNotifier {
               decodedToken['user_id'];
 
           if (userId == null || userId.isEmpty) {
-            print("Warning: Could not extract user ID from token");
+            // print("Warning: Could not extract user ID from token");
           }
 
           // Look for role in different possible fields
@@ -99,11 +99,11 @@ class AuthProvider extends ChangeNotifier {
             } else if (userRole.contains('STUDENT')) {
               userRole = 'STUDENT';
             }
-            print(
-                "AuthProvider (initialize): Extracted role from token: $userRole"); // Added Log
+            // print(
+            //     "AuthProvider (initialize): Extracted role from token: $userRole"); // Added Log
           } else {
-            print(
-                "AuthProvider (initialize): Warning: Could not extract role from token"); // Added Log
+            // print(
+            //     "AuthProvider (initialize): Warning: Could not extract role from token"); // Added Log
           }
 
           // Create user from token data
@@ -116,13 +116,13 @@ class AuthProvider extends ChangeNotifier {
             emailVerified: true, // If they have a token, they're verified
           );
 
-          print(
-              "Initialized user with ID: ${_currentUser?.id} and role: ${_currentUser?.role}");
+          // print(
+          //     "Initialized user with ID: ${_currentUser?.id} and role: ${_currentUser?.role}");
         }
       }
     } catch (e) {
       // Handle error - ensure state is cleared on error too
-      print('Error initializing auth: $e');
+      // print('Error initializing auth: $e');
       _token = null;
       _currentUser = null;
     } finally {
@@ -146,7 +146,7 @@ class AuthProvider extends ChangeNotifier {
 
         // Decode the token to extract user ID
         final decodedToken = JwtDecoder.decode(_token!);
-        print("Full decoded token: $decodedToken");
+        // print("Full decoded token: $decodedToken");
 
         // Try different possible key names for the user ID
         String? userId = decodedToken['sub'] ??
@@ -157,9 +157,9 @@ class AuthProvider extends ChangeNotifier {
             response['data']['userId'];
 
         if (userId == null || userId.isEmpty) {
-          print("Warning: Could not extract user ID from token or response");
+          // print("Warning: Could not extract user ID from token or response");
         } else {
-          print("Login successful, extracted user ID: $userId");
+          // print("Login successful, extracted user ID: $userId");
         }
 
         // Extract role from token
@@ -181,15 +181,15 @@ class AuthProvider extends ChangeNotifier {
           } else {
             normalizedRole = rawRole; // Keep original if no match
           }
-          print(
-              "AuthProvider (login): Extracted raw role: $rawRole, Normalized to: $normalizedRole");
+          // print(
+          //     "AuthProvider (login): Extracted raw role: $rawRole, Normalized to: $normalizedRole");
         } else {
-          print(
-              "AuthProvider (login): No role found in token, checking response data...");
+          // print(
+          //     "AuthProvider (login): No role found in token, checking response data...");
           normalizedRole = response['data'][
               'role']; // Use response role directly (assuming it's already simple)
-          print(
-              "AuthProvider (login): Role from response data: $normalizedRole");
+          // print(
+          //     "AuthProvider (login): Role from response data: $normalizedRole");
         }
 
         // Extract user details from response
@@ -202,7 +202,7 @@ class AuthProvider extends ChangeNotifier {
           emailVerified: true, // If login successful, assume verified
         );
 
-        print("User logged in with role: ${_currentUser?.role}");
+        // print("User logged in with role: ${_currentUser?.role}");
         success = true; // Mark as successful
       } else {
         // Ensure state is cleared on failed login attempt
@@ -211,7 +211,7 @@ class AuthProvider extends ChangeNotifier {
         success = false;
       }
     } catch (e) {
-      print('Login error: $e');
+      // print('Login error: $e');
       _token = null; // Clear state on error
       _currentUser = null;
       success = false;
@@ -234,7 +234,7 @@ class AuthProvider extends ChangeNotifier {
           await _apiService.register(username, password, fullName, email);
       return response;
     } catch (e) {
-      print('Registration error: $e');
+      // print('Registration error: $e');
       return {
         'success': false,
         'message': 'Network error, please try again later',
@@ -275,7 +275,7 @@ class AuthProvider extends ChangeNotifier {
         success = false;
       }
     } catch (e) {
-      print('Email verification error: $e');
+      // print('Email verification error: $e');
       _token = null; // Clear state on error
       _currentUser = null;
       success = false;
@@ -293,16 +293,16 @@ class AuthProvider extends ChangeNotifier {
     // notifyListeners(); // Removed intermediate notify
 
     try {
-      print("AuthProvider: clearing token from API service");
+      // print("AuthProvider: clearing token from API service");
       await _apiService.clearToken();
 
-      print("AuthProvider: setting token and current user to null");
+      // print("AuthProvider: setting token and current user to null");
       _token = null;
       _currentUser = null;
 
-      print("AuthProvider: logout completed successfully");
+      // print("AuthProvider: logout completed successfully");
     } catch (e) {
-      print('AuthProvider: Logout error: $e');
+      // print('AuthProvider: Logout error: $e');
       // Even if there's an error, we should still clear local state
       _token = null;
       _currentUser = null;
@@ -311,7 +311,7 @@ class AuthProvider extends ChangeNotifier {
       // Ensure state is definitely null before notifying
       _token = null;
       _currentUser = null;
-      print("AuthProvider: notified listeners of logout");
+      // print("AuthProvider: notified listeners of logout");
       notifyListeners(); // Notify once at the end
     }
   }
@@ -415,10 +415,10 @@ class AuthProvider extends ChangeNotifier {
   // Smart login - determine if input is username or email
   Future<bool> smartLogin(String usernameOrEmail, String password) async {
     if (isEmail(usernameOrEmail)) {
-      print("Login attempt with email: $usernameOrEmail");
+      // print("Login attempt with email: $usernameOrEmail");
       return loginWithEmail(usernameOrEmail, password);
     } else {
-      print("Login attempt with username: $usernameOrEmail");
+      // print("Login attempt with username: $usernameOrEmail");
       return login(usernameOrEmail, password);
     }
   }
@@ -440,7 +440,7 @@ class AuthProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print('Error changing password: $e');
+      // print('Error changing password: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -457,7 +457,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await _apiService.forgotPassword(email);
       return response['success'] ?? false;
     } catch (e) {
-      print('Forgot password error: $e');
+      // print('Forgot password error: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -476,7 +476,7 @@ class AuthProvider extends ChangeNotifier {
           await _apiService.resetPassword(email, resetCode, newPassword);
       return response['success'] ?? false;
     } catch (e) {
-      print('Reset password error: $e');
+      // print('Reset password error: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -496,7 +496,7 @@ class AuthProvider extends ChangeNotifier {
         'message': response['message'] ?? 'Unknown error occurred'
       };
     } catch (e) {
-      print('Resend verification code error: $e');
+      // print('Resend verification code error: $e');
       return {'success': false, 'message': e.toString()};
     } finally {
       _isLoading = false;
@@ -516,7 +516,7 @@ class AuthProvider extends ChangeNotifier {
         'message': response['message'] ?? 'Unknown error occurred'
       };
     } catch (e) {
-      print('Resend password reset code error: $e');
+      // print('Resend password reset code error: $e');
       return {'success': false, 'message': e.toString()};
     } finally {
       _isLoading = false;
@@ -533,7 +533,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await _apiService.verifyResetCode(email, code);
       return response['success'] ?? false;
     } catch (e) {
-      print('Verify reset code error: $e');
+      // print('Verify reset code error: $e');
       return false;
     } finally {
       _isLoading = false;

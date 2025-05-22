@@ -26,7 +26,7 @@ class DateFormatter {
       // Format with a nice date/time format
       return DateFormat('MMM d, yyyy h:mm a').format(localDate);
     } catch (e) {
-      print('Error formatting date: $e, input was: $dateString');
+      // print('Error formatting date: $e, input was: $dateString');
       return dateString; // Return original string if parsing fails
     }
   }
@@ -55,7 +55,7 @@ class DateFormatter {
       // Format with date only
       return DateFormat('MMM d, yyyy').format(localDate);
     } catch (e) {
-      print('Error formatting date: $e, input was: $dateString');
+      // print('Error formatting date: $e, input was: $dateString');
       return dateString; // Return original string if parsing fails
     }
   }
@@ -78,7 +78,7 @@ class DateFormatter {
       // Format directly without timezone conversion
       return DateFormat('MMM d, yyyy h:mm a').format(date);
     } catch (e) {
-      print('Error formatting non-UTC date: $e, input was: $dateString');
+      // print('Error formatting non-UTC date: $e, input was: $dateString');
       return dateString; // Return original string if parsing fails
     }
   }

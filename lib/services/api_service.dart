@@ -214,18 +214,18 @@ class ApiService {
   Future<Map<String, dynamic>> getCurrentCourses() async {
     final token = await _getToken();
 
-    print("Getting current courses from URL: ${Config.currentCoursesUrl}");
-    print(
-        "Using authorization token: ${token != null ? 'Valid token' : 'No token'}");
+    // print("Getting current courses from URL: ${Config.currentCoursesUrl}");
+    // print(
+    //     "Using authorization token: ${token != null ? 'Valid token' : 'No token'}");
 
     final response = await http.get(
       Uri.parse(Config.currentCoursesUrl),
       headers: _headers(token: token),
     );
 
-    print("Current courses response status: ${response.statusCode}");
+    // print("Current courses response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -235,18 +235,18 @@ class ApiService {
   Future<Map<String, dynamic>> getEnrolledCourses() async {
     final token = await _getToken();
 
-    print("Getting enrolled courses from URL: ${Config.enrolledCoursesUrl}");
-    print(
-        "Using authorization token: ${token != null ? 'Valid token' : 'No token'}");
+    // print("Getting enrolled courses from URL: ${Config.enrolledCoursesUrl}");
+    // print(
+    //     "Using authorization token: ${token != null ? 'Valid token' : 'No token'}");
 
     final response = await http.get(
       Uri.parse(Config.enrolledCoursesUrl),
       headers: _headers(token: token),
     );
 
-    print("Enrolled courses response status: ${response.statusCode}");
+    // print("Enrolled courses response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -282,8 +282,8 @@ class ApiService {
     // Changed parameters
     final token = await _getToken();
 
-    print(
-        "Recording attendance for course $courseId with code $verificationCode"); // Added log
+    // print(
+    //     "Recording attendance for course $courseId with code $verificationCode"); // Added log
 
     final response = await http.post(
       Uri.parse(Config.recordAttendanceUrl),
@@ -306,7 +306,7 @@ class ApiService {
 
     // If userId is empty or null, return an error
     if (userId.isEmpty) {
-      print('Error: Cannot fetch attendance with empty user ID');
+      // print('Error: Cannot fetch attendance with empty user ID');
       return {
         'success': false,
         'message': 'User ID is required to fetch attendance',
@@ -328,23 +328,23 @@ class ApiService {
 
     // If username is empty or null, return an error
     if (username.isEmpty) {
-      print('Error: Cannot fetch attendance with empty username');
+      // print('Error: Cannot fetch attendance with empty username');
       return {
         'success': false,
         'message': 'Username is required to fetch attendance',
       };
     }
 
-    print("Getting attendance by username: $username for course: $courseId");
+    // print("Getting attendance by username: $username for course: $courseId");
     final response = await http.get(
       Uri.parse(
           '${Config.getUserAttendanceByUsernameUrl}/$username/course/$courseId'),
       headers: _headers(token: token),
     );
 
-    print("Response status: ${response.statusCode}");
+    // print("Response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response: ${response.body}");
+      // print("Error response: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -354,15 +354,15 @@ class ApiService {
   Future<Map<String, dynamic>> getCurrentUserAttendance(int courseId) async {
     final token = await _getToken();
 
-    print("Getting attendance for current user for course: $courseId");
+    // print("Getting attendance for current user for course: $courseId");
     final response = await http.get(
       Uri.parse('${Config.getCurrentUserAttendanceUrl}/course/$courseId'),
       headers: _headers(token: token),
     );
 
-    print("Response status: ${response.statusCode}");
+    // print("Response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response: ${response.body}");
+      // print("Error response: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -373,8 +373,8 @@ class ApiService {
       int courseId, int expiryMinutes) async {
     final token = await _getToken();
 
-    print(
-        "Creating attendance session for course $courseId with expiry $expiryMinutes minutes");
+    // print(
+    //     "Creating attendance session for course $courseId with expiry $expiryMinutes minutes");
 
     final response = await http.post(
       Uri.parse(Config.createSessionUrl), // Ensure this URL is in Config
@@ -385,10 +385,10 @@ class ApiService {
       }),
     );
 
-    print("Create session response status: ${response.statusCode}");
+    // print("Create session response status: ${response.statusCode}");
     if (response.statusCode != 201) {
       // Expect 201 Created
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -399,14 +399,14 @@ class ApiService {
   // Get Active Sessions (Professor Only)
   Future<Map<String, dynamic>> getActiveSessions() async {
     final token = await _getToken();
-    print("Getting active sessions from URL: ${Config.activeSessionsUrl}");
+    // print("Getting active sessions from URL: ${Config.activeSessionsUrl}");
     final response = await http.get(
       Uri.parse(Config.activeSessionsUrl),
       headers: _headers(token: token),
     );
-    print("Active sessions response status: ${response.statusCode}");
+    // print("Active sessions response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -418,15 +418,15 @@ class ApiService {
     final token = await _getToken();
     final url =
         '${Config.dailyAttendeesBaseUrl}/$courseId/date/$date/attendees';
-    print(
-        "Getting daily attendees for course $courseId on $date from URL: $url");
+    // print(
+    //     "Getting daily attendees for course $courseId on $date from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Daily attendees response status: ${response.statusCode}");
+    // print("Daily attendees response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -436,7 +436,7 @@ class ApiService {
   Future<dynamic> downloadAttendanceSpreadsheet(int courseId) async {
     final token = await _getToken();
     final url = '${Config.downloadSpreadsheetBaseUrl}/$courseId/spreadsheet';
-    print("Downloading spreadsheet for course $courseId from URL: $url");
+    // print("Downloading spreadsheet for course $courseId from URL: $url");
 
     try {
       final response = await http.get(
@@ -447,12 +447,12 @@ class ApiService {
         },
       );
 
-      print("Download spreadsheet response status: ${response.statusCode}");
+      // print("Download spreadsheet response status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         // Success: Return the raw bytes
-        print(
-            "Spreadsheet downloaded successfully (${response.bodyBytes.length} bytes)");
+        // print(
+        //     "Spreadsheet downloaded successfully (${response.bodyBytes.length} bytes)");
         // Extract filename from Content-Disposition header if needed
         String? filename = response.headers['content-disposition']
             ?.split('filename=')
@@ -465,14 +465,14 @@ class ApiService {
         };
       } else if (response.statusCode == 204) {
         // No content
-        print("No attendance data found for spreadsheet download.");
+        // print("No attendance data found for spreadsheet download.");
         return {
           'success': false,
           'message': 'No attendance data found for this course.'
         };
       } else {
         // Other errors
-        print("Error downloading spreadsheet: ${response.body}");
+        // print("Error downloading spreadsheet: ${response.body}");
         // Try to decode as JSON error message if possible
         try {
           final errorData = jsonDecode(response.body);
@@ -491,7 +491,7 @@ class ApiService {
         }
       }
     } catch (e) {
-      print("Exception during spreadsheet download: $e");
+      // print("Exception during spreadsheet download: $e");
       return {'success': false, 'message': 'Network error during download.'};
     }
   }
@@ -500,14 +500,14 @@ class ApiService {
   Future<Map<String, dynamic>> getSessionAttendees(int sessionId) async {
     final token = await _getToken();
     final url = '${Config.sessionAttendeesBaseUrl}/$sessionId/attendees';
-    print("Getting attendees for session $sessionId from URL: $url");
+    // print("Getting attendees for session $sessionId from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Session attendees response status: ${response.statusCode}");
+    // print("Session attendees response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -538,15 +538,15 @@ class ApiService {
   Future<Map<String, dynamic>> createAssignment(
       Map<String, dynamic> assignmentData) async {
     final token = await _getToken();
-    print("Creating assignment with data: $assignmentData");
+    // print("Creating assignment with data: $assignmentData");
     final response = await http.post(
       Uri.parse(Config.assignmentsUrl),
       headers: _headers(token: token),
       body: jsonEncode(assignmentData),
     );
-    print("Create assignment response status: ${response.statusCode}");
+    // print("Create assignment response status: ${response.statusCode}");
     if (response.statusCode != 201) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -556,16 +556,16 @@ class ApiService {
       int assignmentId, Map<String, dynamic> submissionData) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/$assignmentId/submit';
-    print(
-        "Submitting assignment $assignmentId to URL: $url with data: $submissionData");
+    // print(
+    //     "Submitting assignment $assignmentId to URL: $url with data: $submissionData");
     final response = await http.post(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(submissionData),
     );
-    print("Submit assignment response status: ${response.statusCode}");
+    // print("Submit assignment response status: ${response.statusCode}");
     if (response.statusCode != 201) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -575,16 +575,16 @@ class ApiService {
       int submissionId, Map<String, dynamic> submissionData) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/submissions/$submissionId';
-    print(
-        "Editing submission $submissionId at URL: $url with data: $submissionData");
+    // print(
+    //     "Editing submission $submissionId at URL: $url with data: $submissionData");
     final response = await http.put(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(submissionData),
     );
-    print("Edit submission response status: ${response.statusCode}");
+    // print("Edit submission response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -594,16 +594,16 @@ class ApiService {
       int assignmentId, Map<String, dynamic> assignmentData) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/$assignmentId';
-    print(
-        "Editing assignment $assignmentId at URL: $url with data: $assignmentData");
+    // print(
+    //     "Editing assignment $assignmentId at URL: $url with data: $assignmentData");
     final response = await http.put(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(assignmentData),
     );
-    print("Edit assignment response status: ${response.statusCode}");
+    // print("Edit assignment response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -613,15 +613,15 @@ class ApiService {
       int assignmentId) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/$assignmentId/submissions';
-    print(
-        "Getting assignment submissions for assignment $assignmentId from URL: $url");
+    // print(
+    //     "Getting assignment submissions for assignment $assignmentId from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Get assignment submissions response status: ${response.statusCode}");
+    // print("Get assignment submissions response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -630,14 +630,14 @@ class ApiService {
   Future<Map<String, dynamic>> getStudentSubmissions() async {
     final token = await _getToken();
     const url = '${Config.assignmentsUrl}/submissions/student';
-    print("Getting current student submissions from URL: $url");
+    // print("Getting current student submissions from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Get student submissions response status: ${response.statusCode}");
+    // print("Get student submissions response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -646,14 +646,14 @@ class ApiService {
   Future<Map<String, dynamic>> getAssignmentDetails(int assignmentId) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/$assignmentId';
-    print("Getting assignment details for ID $assignmentId from URL: $url");
+    // print("Getting assignment details for ID $assignmentId from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Get assignment details response status: ${response.statusCode}");
+    // print("Get assignment details response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -663,16 +663,16 @@ class ApiService {
       int submissionId, Map<String, dynamic> gradeData) async {
     final token = await _getToken();
     final url = '${Config.assignmentsUrl}/submissions/$submissionId/grade';
-    print("Grading assignment submission $submissionId with data: $gradeData");
+    // print("Grading assignment submission $submissionId with data: $gradeData");
     final response = await http.post(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(gradeData),
     );
-    print(
-        "Grade assignment submission response status: ${response.statusCode}");
+    // print(
+    //     "Grade assignment submission response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -709,16 +709,16 @@ class ApiService {
   // Create Quiz (Professor Only)
   Future<Map<String, dynamic>> createQuiz(Map<String, dynamic> quizData) async {
     final token = await _getToken();
-    print("Creating quiz with data: $quizData");
+    // print("Creating quiz with data: $quizData");
     final response = await http.post(
       Uri.parse(Config.quizzesUrl), // Use the base quizzes URL for creation
       headers: _headers(token: token),
       body: jsonEncode(quizData),
     );
-    print("Create quiz response status: ${response.statusCode}");
+    // print("Create quiz response status: ${response.statusCode}");
     if (response.statusCode != 201) {
       // Expect 201 Created
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -728,15 +728,15 @@ class ApiService {
       int quizId, Map<String, dynamic> quizData) async {
     final token = await _getToken();
     final url = '${Config.quizzesUrl}/$quizId';
-    print("Editing quiz $quizId at URL: $url with data: $quizData");
+    // print("Editing quiz $quizId at URL: $url with data: $quizData");
     final response = await http.put(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(quizData),
     );
-    print("Edit quiz response status: ${response.statusCode}");
+    // print("Edit quiz response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -747,14 +747,14 @@ class ApiService {
     // Use the correct config URL now
     final url =
         '${Config.availableQuizzesUrl}?courseId=$courseId'; // Add courseId as query param
-    print("Getting available quizzes for course $courseId from URL: $url");
+    // print("Getting available quizzes for course $courseId from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Get available quizzes response status: ${response.statusCode}");
+    // print("Get available quizzes response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -763,14 +763,14 @@ class ApiService {
   Future<Map<String, dynamic>> getProfessorQuizzes() async {
     final token = await _getToken();
     const url = Config.myQuizzesUrl; // Ensure this URL is defined in Config
-    print("Getting professor's quizzes from URL: $url");
+    // print("Getting professor's quizzes from URL: $url");
     final response = await http.get(
       Uri.parse(url),
       headers: _headers(token: token),
     );
-    print("Get professor's quizzes response status: ${response.statusCode}");
+    // print("Get professor's quizzes response status: ${response.statusCode}");
     if (response.statusCode != 200) {
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -779,16 +779,16 @@ class ApiService {
   Future<Map<String, dynamic>> startQuiz(int quizId) async {
     final token = await _getToken();
     final url = '${Config.startQuizBaseUrl}/$quizId/start';
-    print("Starting quiz $quizId from URL: $url");
+    // print("Starting quiz $quizId from URL: $url");
     final response = await http.post(
       Uri.parse(url),
       headers: _headers(token: token),
       // No body needed for start
     );
-    print("Start quiz response status: ${response.statusCode}");
+    // print("Start quiz response status: ${response.statusCode}");
     if (response.statusCode != 200) {
       // Expect 200 OK
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -798,22 +798,22 @@ class ApiService {
       int quizId, List<Map<String, dynamic>> answers) async {
     final token = await _getToken();
     final url = '${Config.submitQuizBaseUrl}/$quizId/submit';
-    print("Submitting quiz $quizId to URL: $url");
+    // print("Submitting quiz $quizId to URL: $url");
     final payload = {
       'quizId': quizId, // API might infer from URL, but include for clarity
       'answers': answers,
     };
-    print("Submission payload: ${jsonEncode(payload)}");
+    // print("Submission payload: ${jsonEncode(payload)}");
 
     final response = await http.post(
       Uri.parse(url),
       headers: _headers(token: token),
       body: jsonEncode(payload),
     );
-    print("Submit quiz response status: ${response.statusCode}");
+    // print("Submit quiz response status: ${response.statusCode}");
     if (response.statusCode != 200) {
       // Expect 200 OK
-      print("Error response body: ${response.body}");
+      // print("Error response body: ${response.body}");
     }
     return jsonDecode(response.body);
   }
@@ -862,7 +862,7 @@ class ApiService {
 
       return _handleError(response);
     } catch (e) {
-      print('Error downloading quiz submissions: $e');
+      // print('Error downloading quiz submissions: $e');
       return {
         'success': false,
         'message': 'Failed to download submissions: $e',
@@ -886,7 +886,7 @@ class ApiService {
 
       return _handleError(response);
     } catch (e) {
-      print('Error fetching quiz submissions: $e');
+      // print('Error fetching quiz submissions: $e');
       return {
         'success': false,
         'message': 'Failed to fetch submissions: $e',
@@ -911,7 +911,7 @@ class ApiService {
 
       return _handleError(response);
     } catch (e) {
-      print('Error fetching submission details: $e');
+      // print('Error fetching submission details: $e');
       return {
         'success': false,
         'message': 'Failed to fetch submission details: $e',
@@ -940,7 +940,7 @@ class ApiService {
       final url =
           fileUrl.startsWith('http') ? fileUrl : Config.getFileUrl(fileUrl);
 
-      print("Getting file from URL with auth: $url");
+      // print("Getting file from URL with auth: $url");
 
       final response = await http.get(
         Uri.parse(url),
@@ -949,10 +949,10 @@ class ApiService {
         },
       );
 
-      print("File response status: ${response.statusCode}");
+      // print("File response status: ${response.statusCode}");
       return response;
     } catch (e) {
-      print("Error getting file: $e");
+      // print("Error getting file: $e");
       // Return a fake response with error status
       return http.Response('{"error": "$e"}', 500);
     }
@@ -1010,7 +1010,7 @@ class ApiService {
         };
       }
     } catch (e) {
-      print("Exception opening file: $e");
+      // print("Exception opening file: $e");
       return {
         'success': false,
         'message': 'Error accessing file: $e',
@@ -1032,12 +1032,12 @@ class ApiService {
     final String? token = requiresAuth ? await _getToken() : null;
 
     if (requiresAuth && token == null) {
-      print("Error: Authentication token required for upload but not found.");
+      // print("Error: Authentication token required for upload but not found.");
       return {'success': false, 'message': 'Authentication required.'};
     }
 
-    print("Uploading file to $uploadUrl");
-    print("File path: ${file.path}");
+    // print("Uploading file to $uploadUrl");
+    // print("File path: ${file.path}");
 
     try {
       // Determine content type
@@ -1079,7 +1079,7 @@ class ApiService {
           contentTypeString = 'application/octet-stream'; // Generic binary type
       }
       final contentType = MediaType.parse(contentTypeString);
-      print("Determined content type: $contentTypeString");
+      // print("Determined content type: $contentTypeString");
 
       var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
 
@@ -1096,16 +1096,16 @@ class ApiService {
       );
       request.files.add(multipartFile);
 
-      print("Sending multipart request...");
+      // print("Sending multipart request...");
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      print("Upload response status: ${response.statusCode}");
-      print("Upload response body: ${response.body}");
+      // print("Upload response status: ${response.statusCode}");
+      // print("Upload response body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isEmpty) {
-          print("Error: Empty response body from upload endpoint.");
+          // print("Error: Empty response body from upload endpoint.");
           return {'success': false, 'message': 'Empty response from server'};
         }
         try {
@@ -1121,7 +1121,7 @@ class ApiService {
                   as Map<String, dynamic> // Ensure data is a Map
             };
           } else {
-            print("Error: Upload response indicates failure or missing data.");
+            // print("Error: Upload response indicates failure or missing data.");
             return {
               'success': false,
               'message': decodedResponse['message'] ??
@@ -1130,7 +1130,7 @@ class ApiService {
             };
           }
         } catch (e) {
-          print("Error parsing upload JSON response: $e");
+          // print("Error parsing upload JSON response: $e");
           return {
             'success': false,
             'message': 'Failed to parse server response.'
@@ -1156,7 +1156,7 @@ class ApiService {
         };
       }
     } catch (e) {
-      print("Exception during file upload: $e");
+      // print("Exception during file upload: $e");
       return {
         'success': false,
         'message': 'An error occurred during upload: ${e.toString()}'
@@ -1169,11 +1169,11 @@ class ApiService {
   // Upload file with optional file type parameter
   Future<dynamic> uploadFile(File file, {String? fileType}) async {
     try {
-      print(
-          "[DEPRECATED] Uploading file to ${Config.publicFileUploadUrl}"); // Mark as deprecated
-      print("File path: ${file.path}");
+      // print(
+      //     "[DEPRECATED] Uploading file to ${Config.publicFileUploadUrl}"); // Mark as deprecated
+      // print("File path: ${file.path}");
       if (fileType != null) {
-        print("File type: $fileType");
+        // print("File type: $fileType");
       }
 
       // Determine content type based on file extension
@@ -1202,7 +1202,7 @@ class ApiService {
           contentType = 'image/jpeg'; // Default to jpeg if unknown
       }
 
-      print("Determined content type: $contentType for extension: $extension");
+      // print("Determined content type: $contentType for extension: $extension");
 
       var request =
           http.MultipartRequest('POST', Uri.parse(Config.publicFileUploadUrl));
@@ -1221,27 +1221,27 @@ class ApiService {
         request.fields['fileType'] = fileType;
       }
 
-      print(
-          "Created multipart request with file: ${multipartFile.filename}, contentType: ${multipartFile.contentType}");
-      print("Sending file upload request...");
+      // print(
+      //     "Created multipart request with file: ${multipartFile.filename}, contentType: ${multipartFile.contentType}");
+      // print("Sending file upload request...");
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      print("File upload response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      // print("File upload response status: ${response.statusCode}");
+      // print("Response body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isEmpty) {
-          print("Warning: Empty response body");
+          // print("Warning: Empty response body");
           return {'success': false, 'message': 'Empty response from server'};
         }
 
         try {
           return jsonDecode(response.body);
         } catch (parseError) {
-          print("Error parsing JSON response: $parseError");
-          print("Response body was: '${response.body}'");
+          // print("Error parsing JSON response: $parseError");
+          // print("Response body was: '${response.body}'");
           return {
             'success': false,
             'message': 'Failed to parse server response',
@@ -1256,7 +1256,7 @@ class ApiService {
         };
       }
     } catch (e) {
-      print("Exception in file upload: $e");
+      // print("Exception in file upload: $e");
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -1265,21 +1265,21 @@ class ApiService {
   Future<dynamic> getPendingProfessorRequests() async {
     try {
       final token = await _getToken();
-      print(
-          "Getting pending professor requests from: ${Config.professorRequestUrl}");
-      print("Token: ${token != null ? "Valid token present" : "No token"}");
+      // print(
+      //     "Getting pending professor requests from: ${Config.professorRequestUrl}");
+      // print("Token: ${token != null ? "Valid token present" : "No token"}");
 
       final response = await http.get(
         Uri.parse(Config.professorRequestUrl),
         headers: _headers(token: token),
       );
 
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      // print("Response status: ${response.statusCode}");
+      // print("Response body: ${response.body}");
 
       return jsonDecode(response.body);
     } catch (e) {
-      print("Error fetching professor requests: $e");
+      // print("Error fetching professor requests: $e");
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -1290,8 +1290,8 @@ class ApiService {
     try {
       final token = await _getToken();
 
-      print("Reviewing professor request: ID=$requestId, approved=$isApproved");
-      print("Using URL: ${Config.professorRequestUrl}/$requestId/review");
+      // print("Reviewing professor request: ID=$requestId, approved=$isApproved");
+      // print("Using URL: ${Config.professorRequestUrl}/$requestId/review");
 
       final payload = {
         'approved': isApproved,
@@ -1299,7 +1299,7 @@ class ApiService {
         'rejectionReason': rejectionReason,
       };
 
-      print("Request payload: $payload");
+      // print("Request payload: $payload");
 
       final response = await http.put(
         Uri.parse('${Config.professorRequestUrl}/$requestId/review'),
@@ -1307,12 +1307,12 @@ class ApiService {
         body: jsonEncode(payload),
       );
 
-      print("Review request response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      // print("Review request response status: ${response.statusCode}");
+      // print("Response body: ${response.body}");
 
       return jsonDecode(response.body);
     } catch (e) {
-      print("Error reviewing professor request: $e");
+      // print("Error reviewing professor request: $e");
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -1322,8 +1322,8 @@ class ApiService {
     try {
       final token = await _getToken();
 
-      print("Creating course with data: $courseData");
-      print("Using URL: ${Config.coursesUrl}");
+      // print("Creating course with data: $courseData");
+      // print("Using URL: ${Config.coursesUrl}");
 
       final response = await http.post(
         Uri.parse(Config.coursesUrl),
@@ -1331,12 +1331,12 @@ class ApiService {
         body: jsonEncode(courseData),
       );
 
-      print("Create course response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      // print("Create course response status: ${response.statusCode}");
+      // print("Response body: ${response.body}");
 
       return jsonDecode(response.body);
     } catch (e) {
-      print("Error creating course: $e");
+      // print("Error creating course: $e");
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -1347,8 +1347,8 @@ class ApiService {
     try {
       final token = await _getToken();
 
-      print("Updating course $courseId with data: $courseData");
-      print("Using URL: ${Config.coursesUrl}/$courseId");
+      // print("Updating course $courseId with data: $courseData");
+      // print("Using URL: ${Config.coursesUrl}/$courseId");
 
       final response = await http.put(
         Uri.parse('${Config.coursesUrl}/$courseId'),
@@ -1356,12 +1356,12 @@ class ApiService {
         body: jsonEncode(courseData),
       );
 
-      print("Update course response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      // print("Update course response status: ${response.statusCode}");
+      // print("Response body: ${response.body}");
 
       return jsonDecode(response.body);
     } catch (e) {
-      print("Error updating course: $e");
+      // print("Error updating course: $e");
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -1371,22 +1371,22 @@ class ApiService {
     try {
       final token = await _getToken();
 
-      print("Deleting course $courseId");
-      print("Using URL: ${Config.coursesUrl}/$courseId");
+      // print("Deleting course $courseId");
+      // print("Using URL: ${Config.coursesUrl}/$courseId");
 
       final response = await http.delete(
         Uri.parse('${Config.coursesUrl}/$courseId'),
         headers: _headers(token: token),
       );
 
-      print("Delete course response status: ${response.statusCode}");
+      // print("Delete course response status: ${response.statusCode}");
       if (response.statusCode == 204 || response.body.isEmpty) {
         return {'success': true, 'message': 'Course deleted successfully'};
       }
 
       return jsonDecode(response.body);
     } catch (e) {
-      print("Error deleting course: $e");
+      // print("Error deleting course: $e");
       return {'success': false, 'message': e.toString()};
     }
   }

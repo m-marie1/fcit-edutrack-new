@@ -157,17 +157,24 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text(
-              'Assignments',
-              style: TextStyle(
-                color: MyAppColors.primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+            title:  Row(
+              children: [
+                const Icon(Icons.assignment_outlined, size: 30,color: MyAppColors.darkBlueColor,),
+                Text(
+                    ' Assignments',
+                    style: Theme.of(context).textTheme.titleLarge
+                )
+              ],
             ),
             backgroundColor: Colors.transparent,
             elevation: 0,
-            iconTheme: const IconThemeData(color: MyAppColors.primaryColor),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+            ),
+            iconTheme: const IconThemeData(color: MyAppColors.darkBlueColor),
             // Add actions for professor mode only
             actions: _isProfessor
                 ? [
@@ -204,9 +211,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                 borderRadius: BorderRadius.circular(20),
                 color: isDark
                     ? MyAppColors.primaryDarkColor
-                    : MyAppColors.whiteColor),
+                    : MyAppColors.lightBackgroundColor),
             child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator(
+              color: MyAppColors.primaryColor,
+            ))
                 : _isProfessor
                     ? (assignments.isEmpty
                         ? const Center(child: Text('No assignments found.'))
@@ -241,12 +250,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Padding(
+                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Text('Active Assignments',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                    style: Theme.of(context).textTheme.titleMedium
+                                ),
                               ),
                               ...assignments.map((assignment) => AssignmentCard(
                                   assignment: assignment,
@@ -254,12 +262,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   isDraft: false)),
                               const SizedBox(height: 16),
                               const Divider(),
-                              const Padding(
+                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Text('Submission History',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                    style: Theme.of(context).textTheme.titleMedium
+                                ),
                               ),
                               FutureBuilder<List<AssignmentSubmission>>(
                                 future: _historyFuture,
@@ -282,9 +289,11 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   return Column(
                                     children: history.map((sub) {
                                       return Card(
+                                         color: MyAppColors.whiteColor,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 16, vertical: 8),
                                         child: ExpansionTile(
+                                          iconColor: MyAppColors.primaryColor,
                                           title: Text(sub.assignmentTitle ??
                                               'Assignment'),
                                           subtitle: Text(
@@ -404,9 +413,12 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                     // Force refresh to update UI based on draft status
                     setState(() {});
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(30)
+                  ),
                   backgroundColor: MyAppColors.primaryColor,
                   tooltip: 'Create Assignment',
-                  child: const Icon(Icons.add),
+                  child: const Icon(Icons.add,color: MyAppColors.whiteColor,),
                 )
               : null,
         );

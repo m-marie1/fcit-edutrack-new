@@ -146,10 +146,19 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
           ),
           const SizedBox(height: 12),
           TextFormField(
+            cursorColor: MyAppColors.primaryColor,
             controller: _topicController, // Use controller
             decoration: const InputDecoration(
               labelText: 'Topic Covered',
+              labelStyle: TextStyle(
+                color: MyAppColors.primaryColor
+              ),
               border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: MyAppColors.primaryColor
+                )
+              ),
               prefixIcon: Icon(Icons.subject),
             ),
           ),
@@ -162,7 +171,15 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
                   readOnly: true, // Make read-only
                   decoration: const InputDecoration(
                     labelText: 'Start Time',
+                    labelStyle: TextStyle(
+                        color: MyAppColors.primaryColor
+                    ),
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                        )
+                    ),
                     prefixIcon: Icon(Icons.access_time),
                   ),
                   onTap: _selectStartTime, // Add onTap handler
@@ -175,7 +192,15 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
                   readOnly: true, // Make read-only
                   decoration: const InputDecoration(
                     labelText: 'End Time',
+                    labelStyle: TextStyle(
+                        color: MyAppColors.primaryColor
+                    ),
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                        )
+                    ),
                     prefixIcon: Icon(Icons.access_time),
                   ),
                   onTap: _selectEndTime, // Add onTap handler
@@ -195,11 +220,20 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
           ),
           const SizedBox(height: 12),
           TextFormField(
+            cursorColor: MyAppColors.primaryColor,
             controller: _expiryMinutesController,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               labelText: 'Duration (minutes)',
+              labelStyle: TextStyle(
+                  color: MyAppColors.primaryColor
+              ),
               border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: MyAppColors.primaryColor
+                  )
+              ),
               prefixIcon: Icon(Icons.timer),
               hintText: 'e.g., 5, 10, 15',
             ),
@@ -286,6 +320,35 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _selectedStartTime,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              timePickerTheme: TimePickerThemeData(
+                  helpTextStyle: const TextStyle(
+                      color: MyAppColors.darkBlueColor,
+                      fontSize: 16
+                  ),
+                  backgroundColor: MyAppColors.lightBackgroundColor,
+                  hourMinuteColor:MyAppColors.primaryColor,
+                  hourMinuteTextColor: Colors.white,
+                  dayPeriodTextColor: MyAppColors.whiteColor,
+                  dialBackgroundColor: MyAppColors.whiteColor,
+                  dialHandColor: MyAppColors.primaryColor,
+                  dialTextColor: Colors.black,
+                  entryModeIconColor: MyAppColors.primaryColor,
+                  dayPeriodColor: MyAppColors.primaryColor
+              ),
+              colorScheme: const ColorScheme.light(
+                primary: MyAppColors.primaryColor,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
+
     );
     if (picked != null && picked != _selectedStartTime) {
       setState(() {
@@ -308,6 +371,35 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _selectedEndTime,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              timePickerTheme: TimePickerThemeData(
+                  helpTextStyle: const TextStyle(
+                      color: MyAppColors.darkBlueColor,
+                      fontSize: 16
+                  ),
+                  backgroundColor: MyAppColors.lightBackgroundColor,
+                  hourMinuteColor:MyAppColors.primaryColor,
+                  hourMinuteTextColor: Colors.white,
+                  dayPeriodTextColor: MyAppColors.whiteColor,
+                  dialBackgroundColor: MyAppColors.whiteColor,
+                  dialHandColor: MyAppColors.primaryColor,
+                  dialTextColor: Colors.black,
+                  entryModeIconColor: MyAppColors.primaryColor,
+                  dayPeriodColor: MyAppColors.primaryColor
+              ),
+              colorScheme: const ColorScheme.light(
+                primary: MyAppColors.primaryColor,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
+
     );
     if (picked != null && picked != _selectedEndTime) {
       setState(() {
@@ -355,6 +447,7 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
+            backgroundColor: MyAppColors.whiteColor,
             title: const Text('Session Created'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -411,7 +504,9 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+                child: const Text('Close',style: TextStyle(
+                  color: MyAppColors.primaryColor
+                ),),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

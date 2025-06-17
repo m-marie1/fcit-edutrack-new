@@ -238,17 +238,40 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
         Text('Quiz Details', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 16),
         TextFormField(
+          cursorColor: MyAppColors.primaryColor,
           controller: _titleController,
           decoration: const InputDecoration(
-              labelText: 'Quiz Title', border: OutlineInputBorder()),
+              labelText: 'Quiz Title',
+              labelStyle: TextStyle(
+                color: MyAppColors.primaryColor
+              ),
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: MyAppColors.primaryColor
+                )
+              ),
+
+          ),
           validator: (value) =>
               value == null || value.isEmpty ? 'Please enter a title' : null,
         ),
         const SizedBox(height: 12),
         TextFormField(
+          cursorColor: MyAppColors.primaryColor,
           controller: _descriptionController,
           decoration: const InputDecoration(
-              labelText: 'Description', border: OutlineInputBorder()),
+              labelText: 'Description',
+            labelStyle: TextStyle(
+                color: MyAppColors.primaryColor
+            ),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: MyAppColors.primaryColor
+                )
+            ),
+          ),
           maxLines: 3,
           validator: (value) => value == null || value.isEmpty
               ? 'Please enter a description'
@@ -285,7 +308,15 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
             return DropdownButtonFormField<Course>(
               decoration: const InputDecoration(
                 labelText: 'Course',
+                labelStyle: TextStyle(
+                    color: MyAppColors.primaryColor
+                ),
                 border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: MyAppColors.primaryColor
+                    )
+                ),
               ),
               isExpanded: true,
               value: _selectedCourse != null
@@ -327,9 +358,18 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
         ),
         const SizedBox(height: 12),
         TextFormField(
+          cursorColor: MyAppColors.primaryColor,
           controller: _durationController,
           decoration: const InputDecoration(
-              labelText: 'Duration (Minutes)', border: OutlineInputBorder()),
+              labelText: 'Duration (Minutes)',
+              labelStyle: TextStyle(
+                color: MyAppColors.primaryColor
+              ),
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(borderSide: BorderSide(
+                color: MyAppColors.primaryColor
+              ) ),
+          ),
           keyboardType: TextInputType.number,
           validator: (value) {
             if (value == null || value.isEmpty) return 'Please enter duration';
@@ -354,11 +394,52 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
               DateTime.now().subtract(const Duration(days: 1)), // Allow today
           lastDate: DateTime.now()
               .add(const Duration(days: 365 * 2)), // Allow 2 years in future
+          builder: (BuildContext context, Widget? child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                datePickerTheme: DatePickerThemeData(
+                  backgroundColor: MyAppColors.lightBackgroundColor,
+                ),
+                colorScheme: const ColorScheme.light(
+                  primary: MyAppColors.primaryColor,
+                ),
+              ),
+              child: child!,
+            );
+          },
         );
         if (pickedDate != null) {
           TimeOfDay? pickedTime = await showTimePicker(
             context: context,
             initialTime: TimeOfDay.fromDateTime(selectedDate ?? DateTime.now()),
+            builder: (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    timePickerTheme: TimePickerThemeData(
+                        helpTextStyle: const TextStyle(
+                            color: MyAppColors.darkBlueColor,
+                            fontSize: 16
+                        ),
+                        backgroundColor: MyAppColors.lightBackgroundColor,
+                        hourMinuteColor:MyAppColors.primaryColor,
+                        hourMinuteTextColor: Colors.white,
+                        dayPeriodTextColor: MyAppColors.whiteColor,
+                        dialBackgroundColor: MyAppColors.whiteColor,
+                        dialHandColor: MyAppColors.primaryColor,
+                        dialTextColor: Colors.black,
+                        entryModeIconColor: MyAppColors.primaryColor,
+                        dayPeriodColor: MyAppColors.primaryColor
+                    ),
+                    colorScheme: const ColorScheme.light(
+                      primary: MyAppColors.primaryColor,
+                    ),
+                  ),
+                  child: child!,
+                ),
+              );
+            },
           );
           if (pickedTime != null) {
             final finalDateTime = DateTime(pickedDate.year, pickedDate.month,
@@ -404,6 +485,7 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
             itemBuilder: (context, index) {
               final question = _questions[index];
               return Card(
+                color: MyAppColors.whiteColor,
                 margin: const EdgeInsets.only(bottom: 8.0),
                 child: ListTile(
                   title: Text(question.text,
@@ -473,206 +555,166 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
 
   // Method to show dialog for adding/editing a question
   Future<void> _showQuestionDialog({int? editIndex}) async {
-    final questionTextController = TextEditingController();
-    final pointsController = TextEditingController();
-    QuestionType selectedType = QuestionType.MULTIPLE_CHOICE;
-    // Declare controllers and state variables needed within the dialog scope
-    List<TextEditingController> optionControllers = [];
-    int? correctOptionIndex; // Index of the correct option for MC questions
-    final textAnswerController = TextEditingController();
+    final isEditing = editIndex != null;
+    final existing = isEditing ? _questions[editIndex!] : null;
 
-    bool isEditing = editIndex != null;
-    if (isEditing) {
-      final existingQuestion = _questions[editIndex];
-      questionTextController.text = existingQuestion.text;
-      pointsController.text = existingQuestion.points.toString();
-      selectedType = existingQuestion.type;
-      // Populate options/answer controllers based on existing question
-      if (existingQuestion.type == QuestionType.MULTIPLE_CHOICE &&
-          existingQuestion.options != null) {
-        optionControllers = existingQuestion.options!
-            .map((opt) => TextEditingController(text: opt.text))
-            .toList();
-        correctOptionIndex =
-            existingQuestion.options!.indexWhere((opt) => opt.isCorrect);
-        if (correctOptionIndex == -1) {
-          correctOptionIndex =
-              null; // Handle case where no correct option was marked
-        }
-      } else if (existingQuestion.type == QuestionType.TEXT_ANSWER) {
-        textAnswerController.text = existingQuestion.correctAnswer ?? '';
-      }
+    final questionTextController = TextEditingController(text: existing?.text ?? '');
+    final pointsController = TextEditingController(text: existing?.points.toString() ?? '');
+    final textAnswerController = TextEditingController(text: existing?.correctAnswer ?? '');
+
+    QuestionType selectedType = existing?.type ?? QuestionType.MULTIPLE_CHOICE;
+
+    List<TextEditingController> optionControllers = [];
+    int? correctOptionIndex;
+
+    if (selectedType == QuestionType.MULTIPLE_CHOICE && existing?.options != null) {
+      optionControllers = existing!.options!
+          .map((opt) => TextEditingController(text: opt.text))
+          .toList();
+      correctOptionIndex = existing.options!.indexWhere((opt) => opt.isCorrect);
+      if (correctOptionIndex == -1) correctOptionIndex = null;
     } else {
-      // Initialize with two empty options for new MC questions by default
-      optionControllers.add(TextEditingController());
-      optionControllers.add(TextEditingController());
+      optionControllers = [TextEditingController(), TextEditingController()];
     }
 
-    await showDialog(
+    final navigator = Navigator.of(context, rootNavigator: true);
+
+    final result = await showDialog<Question>(
       context: context,
       builder: (context) {
-        // Use StatefulBuilder to manage dialog's internal state (like dropdown)
-        return StatefulBuilder(builder: (context, setDialogState) {
-          return AlertDialog(
-            title: Text(isEditing ? 'Edit Question' : 'Add New Question'),
-            content: SingleChildScrollView(
-              // Allow scrolling if content overflows
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: questionTextController,
-                    decoration:
-                        const InputDecoration(labelText: 'Question Text'),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<QuestionType>(
-                    value: selectedType,
-                    items: QuestionType.values
-                        .where((t) => t != QuestionType.UNKNOWN)
-                        .map((type) {
-                      // Exclude UNKNOWN
-                      return DropdownMenuItem<QuestionType>(
-                        value: type,
-                        child: Text(type.name), // Display enum name
-                      );
-                    }).toList(),
-                    onChanged: (QuestionType? newValue) {
-                      if (newValue != null) {
-                        setDialogState(() {
-                          // Use setDialogState for dialog UI updates
-                          selectedType = newValue;
-                        });
-                      }
-                    },
-                    decoration:
-                        const InputDecoration(labelText: 'Question Type'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: pointsController,
-                    decoration: const InputDecoration(labelText: 'Points'),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 16),
-                  // --- Dynamic Fields based on Question Type ---
-                  if (selectedType == QuestionType.MULTIPLE_CHOICE)
-                    _buildMultipleChoiceOptions(
-                        setDialogState, optionControllers, correctOptionIndex,
-                        (index) {
-                      setDialogState(() => correctOptionIndex =
-                          index); // Update correct index state
-                    }),
-                  if (selectedType == QuestionType.TEXT_ANSWER)
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: MyAppColors.whiteColor,
+              title: Text(isEditing ? 'Edit Question' : 'Add New Question'),
+              content: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     TextField(
-                      controller: textAnswerController,
-                      decoration: const InputDecoration(
-                          labelText: 'Correct Answer Text'),
-                      maxLines: 2,
+                      controller: questionTextController,
+                      decoration: const InputDecoration(labelText: 'Question Text'),
                     ),
-                  // --- End Dynamic Fields ---
-                ],
+                    TextField(
+                      controller: pointsController,
+                      decoration: const InputDecoration(labelText: 'Points'),
+                      keyboardType: TextInputType.number,
+                    ),
+                    DropdownButtonFormField<QuestionType>(
+                      value: selectedType,
+                      items: QuestionType.values
+                          .where((t) => t != QuestionType.UNKNOWN)
+                          .map((type) =>
+                          DropdownMenuItem(value: type, child: Text(type.name)))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) setDialogState(() => selectedType = value);
+                      },
+                      decoration: const InputDecoration(labelText: 'Question Type'),
+                    ),
+                    const SizedBox(height: 12),
+                    if (selectedType == QuestionType.MULTIPLE_CHOICE)
+                      _buildMultipleChoiceOptions(
+                        setDialogState,
+                        optionControllers,
+                        correctOptionIndex,
+                            (index) => setDialogState(() => correctOptionIndex = index),
+                      ),
+                    if (selectedType == QuestionType.TEXT_ANSWER)
+                      TextField(
+                        controller: textAnswerController,
+                        decoration:
+                        const InputDecoration(labelText: 'Correct Answer'),
+                      ),
+                    const SizedBox(height: 20), // علشان تضمني مساحة تحت آخر عنصر
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // --- Validation ---
-                  if (questionTextController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Please enter the question text.')));
-                    return;
-                  }
-                  if (pointsController.text.isEmpty ||
-                      int.tryParse(pointsController.text) == null ||
-                      int.parse(pointsController.text) <= 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text(
-                            'Please enter valid points (positive number).')));
-                    return;
-                  }
-                  // Additional validation based on type
-                  if (selectedType == QuestionType.MULTIPLE_CHOICE) {
-                    if (optionControllers.length < 2 ||
-                        optionControllers.any((c) => c.text.isEmpty)) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Please provide at least two non-empty options.')),
-                      );
-                      return;
-                    }
-                    if (correctOptionIndex == null ||
-                        correctOptionIndex! < 0 ||
-                        correctOptionIndex! >= optionControllers.length) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Please mark one option as correct.')),
-                      );
-                      return;
-                    }
-                  } else if (selectedType == QuestionType.TEXT_ANSWER) {
-                    if (textAnswerController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Please provide the correct text answer.')),
-                      );
-                      return;
-                    }
-                  }
-                  // --- End Validation ---
 
-                  final newQuestion = Question(
-                    // id: isEditing ? _questions[editIndex].id : null, // Keep ID if editing
-                    text: questionTextController.text,
-                    type: selectedType,
-                    points: int.parse(pointsController.text),
-                    options: selectedType == QuestionType.MULTIPLE_CHOICE
-                        ? optionControllers.asMap().entries.map((entry) {
-                            int idx = entry.key;
-                            TextEditingController ctrl = entry.value;
-                            return Option(
-                                text: ctrl.text,
-                                isCorrect: idx == correctOptionIndex);
-                          }).toList()
-                        : null,
-                    correctAnswer: selectedType == QuestionType.TEXT_ANSWER
-                        ? textAnswerController.text
-                        : null,
+              actions: [
+                TextButton(
+                  onPressed: () => navigator.pop(),
+                  child: const Text('Cancel',style: TextStyle(
+                    color: MyAppColors.primaryColor
+                  ),),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (questionTextController.text.isEmpty || pointsController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Fill in all required fields')),
+                      );
+                      return;
+                    }
+
+                    if (selectedType == QuestionType.MULTIPLE_CHOICE) {
+                      if (optionControllers.any((c) => c.text.isEmpty) || correctOptionIndex == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Fill all options and mark one as correct')),
+                        );
+                        return;
+                      }
+                    } else if (selectedType == QuestionType.TEXT_ANSWER &&
+                        textAnswerController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Provide correct answer')),
+                      );
+                      return;
+                    }
+
+                    // Close the keyboard safely
+                    FocusScope.of(context).unfocus();
+                    await Future.delayed(const Duration(milliseconds: 300));
+
+                    final newQuestion = Question(
+                      text: questionTextController.text,
+                      type: selectedType,
+                      points: int.parse(pointsController.text),
+                      options: selectedType == QuestionType.MULTIPLE_CHOICE
+                          ? optionControllers.asMap().entries.map((entry) {
+                        return Option(
+                          text: entry.value.text,
+                          isCorrect: entry.key == correctOptionIndex,
+                        );
+                      }).toList()
+                          : null,
+                      correctAnswer: selectedType == QuestionType.TEXT_ANSWER
+                          ? textAnswerController.text
+                          : null,
+                    );
+
+                    if (mounted && navigator.canPop()) {
+                      navigator.pop(newQuestion);
+                    }
+                  },
+                  child: Text(isEditing ? 'Save Changes' : 'Add'),
+                  ),
+                  ],
                   );
-
-                  setState(() {
-                    // Update the main screen's state
-                    if (isEditing) {
-                      _questions[editIndex] = newQuestion;
-                    } else {
-                      _questions.add(newQuestion);
-                    }
-                  });
-                  Navigator.pop(context); // Close dialog
                 },
-                child: Text(isEditing ? 'Save Changes' : 'Add'),
-              ),
-            ],
+              );
+            },
           );
-        });
-      },
-    );
-    // Dispose controllers after dialog is closed
+
+    if (result != null && mounted) {
+      setState(() {
+        if (isEditing) {
+          _questions[editIndex!] = result;
+        } else {
+          _questions.add(result);
+        }
+      });
+    }
+
     questionTextController.dispose();
     pointsController.dispose();
     textAnswerController.dispose();
-    for (var controller in optionControllers) {
-      controller.dispose();
+    for (final c in optionControllers) {
+      c.dispose();
     }
   }
+
 
   // Helper Widget for Multiple Choice Options
   Widget _buildMultipleChoiceOptions(
@@ -693,11 +735,23 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    cursorColor: MyAppColors.primaryColor,
                     controller: ctrl,
-                    decoration: InputDecoration(labelText: 'Option ${idx + 1}'),
+                    decoration: InputDecoration(
+                        labelText: 'Option ${idx + 1}',
+                        labelStyle: const TextStyle(
+                          color: MyAppColors.primaryColor
+                        ),
+                         focusedBorder: const UnderlineInputBorder(
+                           borderSide: BorderSide(
+                             color: MyAppColors.primaryColor
+                           )
+                         )
+                    ),
                   ),
                 ),
                 Radio<int?>(
+                  fillColor: WidgetStateProperty.all(MyAppColors.primaryColor),
                   value: idx,
                   groupValue: correctIndex,
                   onChanged: onCorrectSelected,
@@ -732,8 +786,10 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
         }).toList(),
         const SizedBox(height: 8),
         TextButton.icon(
-          icon: const Icon(Icons.add_circle_outline, size: 18),
-          label: const Text('Add Option'),
+          icon: const Icon(Icons.add_circle_outline, size: 18,color: MyAppColors.primaryColor,),
+          label: const Text('Add Option',style: TextStyle(
+            color: MyAppColors.primaryColor
+          ),),
           onPressed: () {
             setDialogState(() {
               controllers.add(TextEditingController());
@@ -747,6 +803,7 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
   // Placeholder for editing (calls the same dialog)
   void _editQuestion(int index) {
     _showQuestionDialog(editIndex: index);
+
   }
 
   // Method to remove a question

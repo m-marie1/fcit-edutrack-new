@@ -110,7 +110,7 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
                 selectedIndex], // Pass roles to getScreens
         backgroundColor: Provider.of<ThemeProvider>(context).isDark()
             ? MyAppColors.primaryDarkColor
-            : MyAppColors.whiteColor,
+            : MyAppColors.lightBackgroundColor,
         bottomNavigationBar: Container(
           color: MyAppColors.primaryColor,
           child: Padding(
@@ -121,11 +121,11 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
                   setState(() {});
                 },
                 padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.height * 0.024),
+                    EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
                 backgroundColor: MyAppColors.primaryColor,
                 color: Colors.white,
                 activeColor: Colors.white,
-                gap: 8,
+                gap: 6,
                 tabBackgroundColor: MyAppColors.secondaryBlueColor,
                 tabs: _getNavTabs(
                     isAdmin, isProfessor)), // Pass roles to getNavTabs
@@ -189,6 +189,10 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
         GButton(
           icon: Icons.pin_outlined, // Changed icon to reflect code entry
           text: 'Attendance',
+          textStyle: TextStyle(
+            fontSize: 10,
+            color: MyAppColors.whiteColor
+          ),
         ),
         GButton(
           icon: Icons.school,

@@ -14,4 +14,5 @@ class MyAppColors {
   static const Color darkCardColor = Color(0xff0F1A2E);
   static const Color secondaryDarkColor = Color(0xff111827);
   static const Color greyColor = Color(0xFFB0B0B0);
+  static  Color lightBackgroundColor = Colors.blue.shade50;
 }

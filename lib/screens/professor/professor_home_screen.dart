@@ -1,3 +1,4 @@
+import 'package:fci_edutrack/screens/home_screen/profiles/student_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fci_edutrack/screens/professor/professor_attendance_management.dart'; // Import the correct screen
 import 'package:fci_edutrack/screens/professor/quiz_management_screen.dart'; // Placeholder for quiz management
@@ -5,7 +6,9 @@ import 'package:fci_edutrack/screens/assignment/assignment_screen.dart'; // Plac
 import 'package:fci_edutrack/screens/home_screen/courses_screen.dart'; // For enrolling/viewing courses
 import 'package:fci_edutrack/providers/auth_provider.dart'; // Import AuthProvider
 import 'package:provider/provider.dart'; // Import Provider
-import 'package:fci_edutrack/auth/login_screen.dart'; // Import LoginScreen for navigation
+import 'package:fci_edutrack/auth/login_screen.dart';
+
+import '../../style/my_app_colors.dart'; // Import LoginScreen for navigation
 
 // TODO: Implement actual screens for professor features
 
@@ -28,6 +31,7 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
     const ProfessorAttendanceManagementScreen(), // Use the management screen here
     const QuizManagementScreen(), // Placeholder for quizzes
     const AssignmentScreen(), // Placeholder for assignments
+    const StudentProfileScreen(),
   ];
 
   final List<BottomNavigationBarItem> _navItems = [
@@ -47,6 +51,10 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
       icon: Icon(Icons.assignment_outlined), // Changed icon
       label: 'Assignments',
     ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.person), // Changed icon
+      label: 'Profile',
+    ),
   ];
 
   void _onItemTapped(int index) {
@@ -62,11 +70,23 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Professor Dashboard',
-            style: TextStyle(fontSize: 20)), // Adjust font size
+        title:  Text('Professor Dashboard',
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              color: MyAppColors.whiteColor
+            )), // Adjust font size
+        centerTitle: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+            bottomRight:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+          ),
+        ),
+        backgroundColor: MyAppColors.primaryColor,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout,color: Colors.white,),
             tooltip: 'Logout',
             onPressed: () async {
               await authProvider.logout();
@@ -86,9 +106,16 @@ class _ProfessorHomeScreenState extends State<ProfessorHomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: _navItems,
         currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).primaryColor,
+        selectedItemColor: MyAppColors.whiteColor,
+        selectedIconTheme: const IconThemeData(
+          size: 27
+        ),
+        unselectedIconTheme: const IconThemeData(
+            size: 17
+        ),
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
+        backgroundColor: MyAppColors.primaryColor,
         type: BottomNavigationBarType.fixed, // Ensure all labels are visible
       ),
     );

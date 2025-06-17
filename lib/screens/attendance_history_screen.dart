@@ -104,22 +104,33 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
     final attendanceProvider = Provider.of<AttendanceProvider>(context);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
+       appBar: AppBar(
         elevation: 0,
         title: Text(
           'My Attendance History',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
-          ),
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: MyAppColors.whiteColor
+          )
         ),
         iconTheme: IconThemeData(
           color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
         ),
+         centerTitle: true,
+         shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.only(
+             bottomLeft:
+             Radius.circular(MediaQuery.of(context).size.width * 0.1),
+             bottomRight:
+             Radius.circular(MediaQuery.of(context).size.width * 0.1),
+           ),
+         ),
+         backgroundColor: MyAppColors.primaryColor,
+         leading: IconButton(
+           onPressed: () {
+             Navigator.pop(context);
+           },
+           icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
+         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -128,11 +139,7 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
           children: [
             Text(
               'Attendance Records',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
-              ),
+              style:Theme.of(context).textTheme.titleMedium
             ),
             const SizedBox(height: 8),
             Text(
@@ -147,7 +154,9 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
             // List of courses with attendance percentage
             Expanded(
               child: isLoading || courseProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator(
+                color: MyAppColors.primaryColor,
+              ))
                   : courseProvider.enrolledCourses.isEmpty
                       ? const Center(
                           child: Column(
@@ -198,11 +207,11 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
                               margin: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 4),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               color: isDark
                                   ? MyAppColors.primaryDarkColor
-                                  : Colors.white,
+                                  : MyAppColors.whiteColor,
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -287,7 +296,7 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
                                     const SizedBox(height: 16),
                                     const Divider(height: 1),
                                     const SizedBox(height: 8),
-                                    Row(
+                                    Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
@@ -384,12 +393,13 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
 
   Widget _buildAttendanceInfoItem(
       String label, String value, IconData icon, Color color, bool isDark) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
             Icon(icon, color: color, size: 16),
-            const SizedBox(width: 4),
+            const SizedBox(width: 10,),
             Text(
               label,
               style: TextStyle(
@@ -399,7 +409,6 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(

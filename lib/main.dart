@@ -1,3 +1,4 @@
+import 'package:fci_edutrack/screens/help_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -184,6 +185,7 @@ class MyApp extends StatelessWidget {
 
         // Misc routes
         ExplainScreens.routeName: (context) => const ExplainScreens(),
+        HelpAndSupport.routeName: (context) => const HelpAndSupport(),
       },
     );
   }

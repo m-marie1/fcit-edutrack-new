@@ -43,6 +43,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Padding(
       padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
       child: TextFormField(
+        cursorColor: MyAppColors.primaryColor,
         decoration: InputDecoration(
           label:
               Text(widget.label, style: Theme.of(context).textTheme.bodyMedium),

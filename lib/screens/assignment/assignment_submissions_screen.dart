@@ -40,12 +40,14 @@ class _AssignmentSubmissionsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Assignment Submissions'),
+        title:  Text('Assignment Submissions', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          color: MyAppColors.whiteColor
+        )),
         backgroundColor: MyAppColors.primaryColor,
         actions: [
           IconButton(
             icon: Icon(
-                _showGradedOnly ? Icons.filter_list_off : Icons.filter_list),
+                _showGradedOnly ? Icons.filter_list_off : Icons.filter_list,color: MyAppColors.whiteColor,),
             tooltip:
                 _showGradedOnly ? 'Show all submissions' : 'Show graded only',
             onPressed: () {
@@ -55,6 +57,10 @@ class _AssignmentSubmissionsScreenState
             },
           ),
         ],
+        leading: IconButton(
+            onPressed: (){
+              Navigator.pop(context);
+            }, icon: const Icon(Icons.arrow_back_ios,color: MyAppColors.whiteColor,)),
       ),
       body: Consumer<AssignmentProvider>(
         builder: (context, provider, _) {

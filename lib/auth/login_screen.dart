@@ -35,8 +35,6 @@ class _RegisterScreenState extends State<LoginScreen> {
     bool isLoading = Provider.of<AuthProvider>(context).isLoading;
 
     return Scaffold(
-      backgroundColor:
-          isdDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -60,7 +58,7 @@ class _RegisterScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'هيا بنا نبدا',
+                  "Let's get started",
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         color: isdDark
                             ? MyAppColors.whiteColor
@@ -68,12 +66,12 @@ class _RegisterScreenState extends State<LoginScreen> {
                       ),
                 ),
                 Text(
-                  'قم بالتسجيل لحضور سريع دون الحاجة الي قوائم ورقية',
+                  'Register attendance quickly without paper forms',
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
-                      .copyWith(color: MyAppColors.lightBlueColor),
+                      .copyWith(color: MyAppColors.primaryColor),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -173,33 +171,7 @@ class _RegisterScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                Center(
-                  child: Text(
-                    'or',
-                    style: MyThemeData.lightModeStyle.textTheme.bodySmall!
-                        .copyWith(
-                      color: MyAppColors.blackColor,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/google_logo.png',
-                      width: MediaQuery.of(context).size.width * 0.05,
-                      fit: BoxFit.fill,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.04,
-                    ),
-                    Image.asset(
-                      'assets/images/facebook_logo.png',
-                      width: MediaQuery.of(context).size.width * 0.05,
-                      fit: BoxFit.fill,
-                    ),
-                  ],
-                ),
+                SizedBox(height: MediaQuery.of(context).size.height*0.015,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

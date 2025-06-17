@@ -141,12 +141,17 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Quiz Management',
-          style: TextStyle(
-            color: MyAppColors.primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
+        title: const Row(
+          children: [
+            Icon(Icons.quiz_outlined,color: MyAppColors.darkBlueColor,size: 30,),
+            Text(
+              ' Quiz Management',
+              style: TextStyle(
+                color: MyAppColors.darkBlueColor,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          ],
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -187,7 +192,9 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
       body: Consumer<QuizProvider>(
         builder: (context, quizProvider, child) {
           if (quizProvider.isLoading && quizProvider.professorQuizzes.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(
+              color: MyAppColors.primaryColor,
+            ));
           }
           if (!quizProvider.isLoading &&
               quizProvider.professorQuizzes.isEmpty) {
@@ -201,6 +208,9 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyAppColors.primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(30)
+        ),
         onPressed: () {
           Navigator.pushNamed(context, QuizCreationScreen.routeName)
               .then((value) {
@@ -209,7 +219,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
           });
         },
         tooltip: 'Create Quiz',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,color: MyAppColors.whiteColor,),
       ),
     );
   }
@@ -288,6 +298,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
               '${course.courseName ?? 'Unknown'} (ID: ${quiz.courseId})';
 
           return Card(
+            color: MyAppColors.whiteColor,
             elevation: 2,
             margin: const EdgeInsets.only(bottom: 16),
             child: Column(
@@ -354,13 +365,17 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                     alignment: MainAxisAlignment.spaceAround,
                     children: [
                       TextButton.icon(
-                        icon: const Icon(Icons.visibility),
-                        label: const Text('Submissions'), // Shortened label
+                        icon: const Icon(Icons.visibility,color: MyAppColors.primaryColor,),
+                        label: const Text('Submissions',style: TextStyle(
+                          color: MyAppColors.primaryColor
+                        ),), // Shortened label
                         onPressed: () => _viewSubmissions(quiz),
                       ),
                       TextButton.icon(
-                        icon: const Icon(Icons.download),
-                        label: const Text('Download'), // Shortened label
+                        icon: const Icon(Icons.download,color: MyAppColors.primaryColor,),
+                        label: const Text('Download',style: TextStyle(
+                          color: MyAppColors.primaryColor
+                        ),), // Shortened label
                         onPressed: () => _downloadSubmissions(quiz),
                       ),
                       IconButton(

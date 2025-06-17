@@ -115,11 +115,19 @@ class _ProfessorAttendanceManagementScreenState
     return Scaffold(
       // AppBar might be handled by MyBottomNavBar, or add one here if needed
       body: RefreshIndicator(
+        color: MyAppColors.primaryColor,
         onRefresh: _refreshData, // Use combined refresh method
         child: ListView(
           // Changed to ListView to accommodate multiple sections
           padding: const EdgeInsets.all(16.0),
           children: [
+            Row(
+              children: [
+                const Icon(Icons.timer_outlined,size: 30,color: MyAppColors.darkBlueColor,),
+                Text(' Attendance Management',style: Theme.of(context).textTheme.titleMedium,),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height*0.03,),
             // Section 1: Select Course to Create Session
             Text(
               '1. Create Attendance Session',
@@ -191,7 +199,9 @@ class _ProfessorAttendanceManagementScreenState
   Widget _buildCourseListForSessionCreation(CourseProvider courseProvider) {
     if (courseProvider.isLoading && courseProvider.enrolledCourses.isEmpty) {
       // Show loading only if courses haven't been loaded yet
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ));
     }
 
     final enrolledCourses = courseProvider.enrolledCourses;
@@ -233,6 +243,10 @@ class _ProfessorAttendanceManagementScreenState
       // Use Column instead of ListView directly if parent is already scrollable
       children: enrolledCourses.map((course) {
         return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(20)
+          ),
+          color: MyAppColors.whiteColor,
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -277,7 +291,9 @@ class _ProfessorAttendanceManagementScreenState
   Widget _buildActiveSessionsList(AttendanceProvider attendanceProvider) {
     if (attendanceProvider.isLoading &&
         attendanceProvider.activeSessions.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ));
     }
     if (attendanceProvider.activeSessions.isEmpty) {
       return const Center(child: Text('No active sessions found.'));
@@ -356,6 +372,10 @@ class _ProfessorAttendanceManagementScreenState
     }
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(20)
+      ),
+      color: MyAppColors.whiteColor,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -444,6 +464,10 @@ class _ProfessorAttendanceManagementScreenState
     }
 
     return Card(
+      color: MyAppColors.whiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(20)
+      ),
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -489,13 +513,13 @@ class _ProfessorAttendanceManagementScreenState
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2))
+                        child: CircularProgressIndicator(strokeWidth: 2,color: MyAppColors.primaryColor,),)
                     : const Icon(Icons.download_outlined),
                 label: Text(_isDownloading
                     ? 'Downloading...'
                     : 'Download Spreadsheet (CSV)'),
                 style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                    ElevatedButton.styleFrom(backgroundColor: MyAppColors.primaryColor),
               ),
             ),
           ],
@@ -563,6 +587,20 @@ class _ProfessorAttendanceManagementScreenState
       initialDate: _selectedReportDate ?? DateTime.now(),
       firstDate: DateTime(2020), // Adjust as needed
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            datePickerTheme: DatePickerThemeData(
+                backgroundColor: MyAppColors.lightBackgroundColor,
+            ),
+            colorScheme: const ColorScheme.light(
+              primary: MyAppColors.primaryColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+
     );
     if (picked != null && picked != _selectedReportDate) {
       setState(() {
@@ -583,7 +621,9 @@ class _ProfessorAttendanceManagementScreenState
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
+      builder: (context) => const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      )),
     );
 
     await provider.fetchDailyAttendees(courseId, dateString);
@@ -598,6 +638,7 @@ class _ProfessorAttendanceManagementScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: MyAppColors.whiteColor,
         title: Text(
             'Attendees for ${DateFormat('MMM d, yyyy').format(_selectedReportDate!)}'),
         content: SizedBox(
@@ -621,7 +662,9 @@ class _ProfessorAttendanceManagementScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: const Text('Close',style: TextStyle(
+              color: MyAppColors.primaryColor
+            ),),
           ),
         ],
       ),

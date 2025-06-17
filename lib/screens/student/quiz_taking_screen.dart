@@ -196,6 +196,7 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
       barrierDismissible:
           false, // Prevent dismissing during submission feedback
       builder: (context) => AlertDialog(
+        backgroundColor: MyAppColors.whiteColor,
         title: Text(timeout ? 'Time Expired!' : 'Quiz Submitted'),
         content: Text(
             (response['message'] ?? // Ensure message is converted to String
@@ -209,7 +210,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Go back to quiz list
             },
-            child: const Text('OK'),
+            child: const Text('OK',style: TextStyle(
+              color: MyAppColors.primaryColor
+            ),),
           ),
         ],
       ),
@@ -224,8 +227,17 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.quiz.title, overflow: TextOverflow.ellipsis),
+        title: Text(widget.quiz.title, overflow: TextOverflow.ellipsis,style: TextStyle(
+          color: MyAppColors.whiteColor
+        ),),
         backgroundColor: MyAppColors.primaryColor,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios,color: MyAppColors.whiteColor,),
+        ),
+
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -233,7 +245,7 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
               child: Text(
                 'Time: ${_formatDuration(_remainingSeconds)}',
                 style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: MyAppColors.whiteColor),
               ),
             ),
           ),

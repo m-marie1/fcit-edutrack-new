@@ -34,16 +34,9 @@ class AssignmentCard extends StatelessWidget {
         padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
         decoration: BoxDecoration(
-            border: Border.all(
-                color: isDraft
-                    ? Colors.purple.shade300
-                    : (Provider.of<ThemeProvider>(context).isDark()
-                        ? Colors.blue.shade800
-                        : Colors.grey.shade300),
-                width: 2),
-            borderRadius: BorderRadius.circular(15)),
+           color: MyAppColors.whiteColor,
+            borderRadius: BorderRadius.circular(20)),
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.3,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

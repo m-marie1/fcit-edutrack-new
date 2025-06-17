@@ -202,7 +202,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text('Cancel',style: TextStyle(
+              color: MyAppColors.primaryColor
+            ),),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -258,6 +260,34 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              timePickerTheme: TimePickerThemeData(
+                helpTextStyle: const TextStyle(
+                  color: MyAppColors.darkBlueColor,
+                  fontSize: 16
+                ),
+                backgroundColor: MyAppColors.lightBackgroundColor,
+                hourMinuteColor:MyAppColors.primaryColor,
+                hourMinuteTextColor: Colors.white,
+                dayPeriodTextColor: MyAppColors.whiteColor,
+                dialBackgroundColor: MyAppColors.whiteColor,
+                dialHandColor: MyAppColors.primaryColor,
+                dialTextColor: Colors.black,
+                entryModeIconColor: MyAppColors.primaryColor,
+                 dayPeriodColor: MyAppColors.primaryColor
+              ),
+              colorScheme: const ColorScheme.light(
+                primary: MyAppColors.primaryColor,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
     );
 
     if (selectedTime != null) {
@@ -272,8 +302,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
     final isDark = Provider.of<ThemeProvider>(context).isDark();
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -282,7 +310,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+            color: isDark ? MyAppColors.whiteColor : MyAppColors.primaryColor,
           ),
         ),
         iconTheme: IconThemeData(
@@ -290,14 +318,16 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: MyAppColors.primaryColor,),
             onPressed: _fetchCourses,
             tooltip: 'Refresh',
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : _errorMessage != null
               ? Center(
                   child: Padding(
@@ -331,7 +361,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                       Card(
                         margin: const EdgeInsets.only(bottom: 24),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         color: isDark
                             ? MyAppColors.secondaryDarkColor
@@ -351,18 +381,33 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color:
-                                        isDark ? Colors.white : Colors.black87,
+                                        isDark ? Colors.white : MyAppColors.darkBlueColor,
                                   ),
                                 ),
                                 const SizedBox(height: 16),
                                 // Course Code
                                 TextFormField(
                                   controller: _courseCodeController,
+                                  cursorColor: MyAppColors.primaryColor,
                                   decoration: InputDecoration(
                                     labelText: 'Course Code',
+                                    labelStyle: const TextStyle(
+                                        color: MyAppColors.darkBlueColor
+                                    ),
                                     hintText: 'e.g., CS101',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
+                                      borderSide: const BorderSide(
+                                        color: MyAppColors.primaryColor,
+                                        width: 2
+                                      )
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.darkBlueColor,
+                                            width: 2
+                                        )
                                     ),
                                   ),
                                   validator: (value) {
@@ -375,15 +420,29 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                 const SizedBox(height: 16),
                                 // Course Name
                                 TextFormField(
+                                  cursorColor: MyAppColors.primaryColor,
                                   controller: _courseNameController,
                                   decoration: InputDecoration(
                                     labelText: 'Course Name',
+                                    labelStyle:  const TextStyle(
+                                        color: MyAppColors.darkBlueColor
+                                    ),
                                     hintText:
                                         'e.g., Introduction to Computer Science',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.primaryColor,
+                                            width: 2
+                                        )
                                     ),
-                                  ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.darkBlueColor,
+                                            width: 2
+                                        )
+                                    ),),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a course name';
@@ -394,12 +453,27 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                 const SizedBox(height: 16),
                                 // Description
                                 TextFormField(
+                                  cursorColor: MyAppColors.primaryColor,
                                   controller: _descriptionController,
                                   decoration: InputDecoration(
                                     labelText: 'Description',
+                                    labelStyle: const TextStyle(
+                                        color: MyAppColors.darkBlueColor
+                                    ),
                                     hintText: 'Course description',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.primaryColor,
+                                            width: 2
+                                        )
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.darkBlueColor,
+                                            width: 2
+                                        )
                                     ),
                                   ),
                                   maxLines: 3,
@@ -410,9 +484,23 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _startTimeController,
                                   decoration: InputDecoration(
                                     labelText: 'Start Time',
+                                    labelStyle: const TextStyle(
+                                        color: MyAppColors.darkBlueColor
+                                    ),
                                     hintText: '09:00:00',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.primaryColor,
+                                            width: 2
+                                        )
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.darkBlueColor,
+                                            width: 2
+                                        )
                                     ),
                                     suffixIcon: IconButton(
                                       icon: const Icon(Icons.access_time),
@@ -434,9 +522,23 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _endTimeController,
                                   decoration: InputDecoration(
                                     labelText: 'End Time',
+                                    labelStyle: const TextStyle(
+                                        color: MyAppColors.darkBlueColor
+                                    ),
                                     hintText: '10:30:00',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.primaryColor,
+                                            width: 2
+                                        )
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: MyAppColors.darkBlueColor,
+                                            width: 2
+                                        )
                                     ),
                                     suffixIcon: IconButton(
                                       icon: const Icon(Icons.access_time),
@@ -459,7 +561,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     color:
-                                        isDark ? Colors.white : Colors.black87,
+                                        isDark ? Colors.white : MyAppColors.darkBlueColor,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -507,7 +609,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 16),
                                           ),
-                                          child: const Text('Cancel'),
+                                          child: const Text('Cancel',style: TextStyle(
+                                            color: MyAppColors.primaryColor
+                                          ),),
                                         ),
                                       ),
                                     if (_isEditMode) const SizedBox(width: 16),
@@ -540,7 +644,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                           fontWeight: FontWeight.bold,
                           color: isDark
                               ? MyAppColors.whiteColor
-                              : MyAppColors.blackColor,
+                              : MyAppColors.darkBlueColor,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -581,7 +685,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                 return Card(
                                   margin: const EdgeInsets.only(bottom: 12),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   color: isDark
                                       ? MyAppColors.secondaryDarkColor
@@ -609,7 +713,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                                           FontWeight.bold,
                                                       color: isDark
                                                           ? Colors.white
-                                                          : Colors.black87,
+                                                          : MyAppColors.darkBlueColor,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 4),
@@ -628,7 +732,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                             Row(
                                               children: [
                                                 IconButton(
-                                                  icon: const Icon(Icons.edit),
+                                                  icon: const Icon(Icons.edit,color: MyAppColors.primaryColor,),
                                                   onPressed: () =>
                                                       _editCourse(course),
                                                   tooltip: 'Edit',

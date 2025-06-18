@@ -55,7 +55,12 @@ class _AssignmentDraftsScreenState extends State<AssignmentDraftsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Assignment Drafts'),
+        title:  Text('Assignment Drafts',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          color: MyAppColors.whiteColor
+        ),),
+        iconTheme: const IconThemeData(
+          color: MyAppColors.whiteColor,
+        ),
         backgroundColor: MyAppColors.primaryColor,
       ),
       body: !assignmentProvider.hasDraft

@@ -260,7 +260,7 @@ class _AssignmentDetailsState extends State<AssignmentDetails> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios,color: MyAppColors.whiteColor,),
         ),
       ),
       body: _isLoading
@@ -287,17 +287,13 @@ class _AssignmentDetailsState extends State<AssignmentDetails> {
                           padding: EdgeInsets.all(
                               MediaQuery.of(context).size.width * 0.019),
                           decoration: BoxDecoration(
-                              color: MyAppColors.whiteColor,
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
                             assignment.title,
                             style: Theme.of(context)
                                 .textTheme
-                                .titleSmall!
-                                .copyWith(
-                                    color: MyAppColors.darkBlueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18),
+                                .titleLarge,
                           ),
                         ),
                         SizedBox(

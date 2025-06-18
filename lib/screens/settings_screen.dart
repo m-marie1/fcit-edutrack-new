@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
-
+import '../providers/auth_provider.dart';
 import '../style/my_app_colors.dart';
 import '../themes/my_theme_data.dart';
 import '../themes/theme_provider.dart';
@@ -24,6 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoadingBSSID = true;
   bool _isSavingBSSID = false;
   static const String _defaultBSSID = ''; // Default value
+  String _targetBSSID = '';
 
   @override
   void initState() {
@@ -42,15 +43,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final customBSSID = prefs.getString('custom_target_bssid');
-      _bssidController.text = customBSSID ?? _defaultBSSID; // Set initial value
+
+      setState(() {
+        _bssidController.text = customBSSID ?? _defaultBSSID;
+        _targetBSSID = customBSSID ?? _defaultBSSID; // ✅ مهم للتأكيد
+      });
     } catch (e) {
       print("Error loading target BSSID: $e");
-      _bssidController.text = _defaultBSSID; // Fallback
+      setState(() {
+        _bssidController.text = _defaultBSSID;
+        _targetBSSID = _defaultBSSID; // ✅ fallback
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Could not load custom BSSID setting.'),
-              backgroundColor: Colors.orange),
+            content: Text('Could not load custom BSSID setting.'),
+            backgroundColor: Colors.orange,
+          ),
         );
       }
     } finally {
@@ -132,10 +141,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Read role directly from provider inside build
+    final authProvider = Provider.of<AuthProvider>(context);
+    // Use getters from AuthProvider which now correctly compare roles
+    final bool isAdmin = authProvider.currentUser?.role?.toUpperCase() ==
+        'ADMIN'; // Use normalized role
     final themeProvider =
         Provider.of<ThemeProvider>(context); // Get theme provider instance
     return Scaffold(
-      appBar: AppBar(
+      appBar: (isAdmin)?
+      null
+          :AppBar(
         title: Text(
           'Settings',
           style: MyThemeData.lightModeStyle.textTheme.titleMedium!
@@ -156,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
         ),
       ),
       body: SingleChildScrollView(
@@ -195,126 +211,152 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24), // Increased spacing
-
-            // --- Password Settings ---
-            Text('Security', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.09),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12), // Adjusted radius
-                border: Border.all(
-                  color: themeProvider.isDark() // Use instance
-                      ? Colors.blueGrey.shade700 // Adjusted colors
-                      : Colors.grey.shade300,
-                ),
-                color: themeProvider.isDark()
-                    ? Colors.grey.shade800
-                    : Colors.white, // Background color
-              ),
-              child: Column(
+            const SizedBox(height: 24,),
+            if(!isAdmin)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Password Security'),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                              context, ChangePasswordScreen.routeName);
-                        },
+                  // --- Password Settings ---
+                  Text('Security', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.09),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12), // Adjusted radius
+                      border: Border.all(
+                        color: themeProvider.isDark() // Use instance
+                            ? Colors.blueGrey.shade700 // Adjusted colors
+                            : Colors.grey.shade300,
                       ),
-                    ],
-                  ),
-                  const Text(
-                    'Change your password to keep your account secure',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
+                      color: themeProvider.isDark()
+                          ? Colors.grey.shade800
+                          : Colors.white, // Background color
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Password Security'),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_forward_ios),
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, ChangePasswordScreen.routeName);
+                              },
+                            ),
+                          ],
+                        ),
+                        const Text(
+                          'Change your password to keep your account secure',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 24), // Increased spacing
 
-            // --- Target BSSID Setting (for Testing) ---
-            Text('Attendance Network (Testing)',
-                style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.all(
-                  MediaQuery.of(context).size.width * 0.05), // Adjusted padding
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: themeProvider.isDark()
-                      ? Colors.blueGrey.shade700
-                      : Colors.grey.shade300,
-                ),
-                color: themeProvider.isDark()
-                    ? Colors.grey.shade800
-                    : Colors.white,
-              ),
-              child: _isLoadingBSSID
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Enter the target Wi-Fi BSSID (MAC Address) for attendance verification. Use uppercase letters.',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _bssidController,
-                          enabled: !_isSavingBSSID, // Disable while saving
-                          decoration: InputDecoration(
-                              labelText: 'Target BSSID',
-                              hintText: _defaultBSSID, // Show default as hint
-                              border: const OutlineInputBorder(),
-                              suffixIcon: IconButton(
-                                // Add clear button
-                                icon: const Icon(Icons.clear),
-                                onPressed: _isSavingBSSID
-                                    ? null
-                                    : () => _bssidController.clear(),
-                              )),
-                          textCapitalization: TextCapitalization.characters,
-                          // Optional: Add validation for MAC address format
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed:
-                                  _isSavingBSSID ? null : _resetTargetBSSID,
-                              child: const Text('Reset to Default'),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed:
-                                  _isSavingBSSID ? null : _saveTargetBSSID,
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: MyAppColors.primaryColor),
-                              child: _isSavingBSSID
-                                  ? const SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2, color: Colors.white),
-                                    )
-                                  : const Text('Save BSSID',
-                                      style: TextStyle(color: Colors.white)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-            ),
+            const SizedBox(height: 24), // Increased spacing
+            // Increased spacing
+
+           if(isAdmin)
+             // --- Target BSSID Setting (for Testing) ---
+             Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text('Attendance Network',
+                     style: Theme.of(context).textTheme.titleMedium),
+                 const SizedBox(height: 8),
+                 Container(
+                   padding: EdgeInsets.all(
+                       MediaQuery.of(context).size.width * 0.05), // Adjusted padding
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(12),
+                     border: Border.all(
+                       color: themeProvider.isDark()
+                           ? Colors.blueGrey.shade700
+                           : Colors.grey.shade300,
+                     ),
+                     color: themeProvider.isDark()
+                         ? Colors.grey.shade800
+                         : Colors.white,
+                   ),
+                   child: _isLoadingBSSID
+                       ? const Center(child: CircularProgressIndicator(
+                     color: MyAppColors.primaryColor,
+                   ))
+                       : Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       const Text(
+                         'Enter the target Wi-Fi BSSID (MAC Address) for attendance verification. Use uppercase letters.',
+                         style: TextStyle(fontSize: 12, color: Colors.grey),
+                       ),
+                       const SizedBox(height: 12),
+                       TextFormField(
+                         cursorColor: MyAppColors.primaryColor,
+                         controller: _bssidController,
+                         enabled: !_isSavingBSSID, // Disable while saving
+                         decoration: InputDecoration(
+                             labelText: 'Target BSSID',
+                             labelStyle: const TextStyle(
+                               color: MyAppColors.primaryColor
+                             ),
+                             hintText: _defaultBSSID, // Show default as hint
+                             focusedBorder: const OutlineInputBorder(
+                               borderSide: BorderSide(
+                                 color: MyAppColors.primaryColor
+                               )
+                             ),
+                             suffixIcon: IconButton(
+                               // Add clear button
+                               icon: const Icon(Icons.clear,color: MyAppColors.primaryColor,),
+                               onPressed: _isSavingBSSID
+                                   ? null
+                                   : () => _bssidController.clear(),
+                             )),
+                         textCapitalization: TextCapitalization.characters,
+                         // Optional: Add validation for MAC address format
+                       ),
+                       const SizedBox(height: 12),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.end,
+                         children: [
+                           TextButton(
+                             onPressed:
+                             _isSavingBSSID ? null : _resetTargetBSSID,
+                             child: const Text('Reset to Default',style: TextStyle(
+                               color: MyAppColors.primaryColor
+                             ),),
+                           ),
+                           const SizedBox(width: 8),
+                           ElevatedButton(
+                             onPressed:
+                             _isSavingBSSID ? null : _saveTargetBSSID,
+                             style: ElevatedButton.styleFrom(
+                                 backgroundColor: MyAppColors.primaryColor),
+                             child: _isSavingBSSID
+                                 ? const SizedBox(
+                               width: 16,
+                               height: 16,
+                               child: CircularProgressIndicator(
+                                   strokeWidth: 2, color: Colors.white),
+                             )
+                                 : const Text('Save BSSID',
+                                 style: TextStyle(color: Colors.white)),
+                           ),
+                         ],
+                       ),
+                     ],
+                   ),
+                 ),
+               ],
+             )
+
           ],
         ),
       ),

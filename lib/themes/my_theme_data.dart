@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class MyThemeData {
   static final ThemeData lightModeStyle = ThemeData(
-      scaffoldBackgroundColor: MyAppColors.whiteColor,
+      scaffoldBackgroundColor: MyAppColors.lightBackgroundColor,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: MyAppColors.primaryColor,
@@ -37,7 +37,8 @@ class MyThemeData {
           fontWeight: FontWeight.bold,
           color: MyAppColors.blackColor,
         ),
-      ));
+      )
+  );
   static final ThemeData darkModeStyle = ThemeData(
       scaffoldBackgroundColor: MyAppColors.primaryDarkColor,
       elevatedButtonTheme: ElevatedButtonThemeData(

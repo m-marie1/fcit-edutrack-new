@@ -53,15 +53,28 @@ class _StudentQuizListScreenState extends State<StudentQuizListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title:  Text(
           'Available Quizzes',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: MyAppColors.whiteColor
+          )
+        ),
+        centerTitle: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+            bottomRight:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
           ),
         ),
         backgroundColor: MyAppColors.primaryColor,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios,color: MyAppColors.whiteColor,),
+        ),
       ),
       body: Consumer<QuizProvider>(
         builder: (context, quizProvider, child) {

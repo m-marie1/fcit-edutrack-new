@@ -194,8 +194,15 @@ class _AssignmentGradingScreenState extends State<AssignmentGradingScreen> {
     final sub = widget.submission;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Grade Submission'),
+        title:  Text('Grade Submission',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          color: MyAppColors.whiteColor
+        ),),
+        centerTitle: true,
         backgroundColor: MyAppColors.primaryColor,
+        leading: IconButton(
+            onPressed: (){
+              Navigator.pop(context);
+            }, icon: const Icon(Icons.arrow_back_ios,color: MyAppColors.whiteColor,)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -229,15 +236,38 @@ class _AssignmentGradingScreenState extends State<AssignmentGradingScreen> {
               const SizedBox(height: 8),
             ],
             TextFormField(
+              cursorColor: MyAppColors.primaryColor,
               controller: _scoreController,
-              decoration: const InputDecoration(labelText: 'Score'),
+              decoration: const InputDecoration(
+                  labelText: 'Score',
+                  labelStyle: TextStyle(
+                    color: MyAppColors.primaryColor
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: MyAppColors.primaryColor
+                    )
+                  )
+              ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 8),
             TextFormField(
+              cursorColor: MyAppColors.primaryColor,
               controller: _feedbackController,
-              decoration: const InputDecoration(labelText: 'Feedback'),
+              decoration: const InputDecoration(
+                  labelText: 'Feedback',
+                  labelStyle: TextStyle(
+                    color: MyAppColors.primaryColor
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: MyAppColors.primaryColor
+                    )
+                  )
+              ),
               maxLines: 3,
+
             ),
             const SizedBox(height: 16),
             _loading

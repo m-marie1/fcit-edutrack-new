@@ -8,10 +8,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Provider.of<ThemeProvider>(context).isDark()
-          ? MyAppColors.primaryDarkColor
-          : MyAppColors.whiteColor,
+    return Scaffold(
+
     );
   }
 }

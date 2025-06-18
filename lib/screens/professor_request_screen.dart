@@ -163,21 +163,31 @@ class _ProfessorRequestScreenState extends State<ProfessorRequestScreen> {
     final isDark = Provider.of<ThemeProvider>(context).isDark();
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Professor Access Request',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: MyAppColors.whiteColor
           ),
         ),
-        iconTheme: IconThemeData(
-          color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+        iconTheme: const IconThemeData(
+          color:  MyAppColors.whiteColor,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+            bottomRight:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+          ),
+        ),
+        backgroundColor: MyAppColors.primaryColor,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
       body: SingleChildScrollView(
@@ -195,7 +205,7 @@ class _ProfessorRequestScreenState extends State<ProfessorRequestScreen> {
                     fontWeight: FontWeight.bold,
                     color: isDark
                         ? MyAppColors.whiteColor
-                        : MyAppColors.blackColor,
+                        : MyAppColors.darkBlueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -296,7 +306,7 @@ class _ProfessorRequestScreenState extends State<ProfessorRequestScreen> {
                     fontWeight: FontWeight.bold,
                     color: isDark
                         ? MyAppColors.whiteColor
-                        : MyAppColors.blackColor,
+                        : MyAppColors.darkBlueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -339,7 +349,7 @@ class _ProfessorRequestScreenState extends State<ProfessorRequestScreen> {
                     fontSize: 16,
                     color: isDark
                         ? MyAppColors.whiteColor
-                        : MyAppColors.blackColor,
+                        : MyAppColors.darkBlueColor,
                   ),
                 ),
                 const SizedBox(height: 8),

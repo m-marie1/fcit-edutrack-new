@@ -171,8 +171,14 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(screenTitle),
+        title: Text(screenTitle,style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          color: MyAppColors.whiteColor
+        ),
+        ),
         backgroundColor: MyAppColors.primaryColor,
+        iconTheme: const IconThemeData(
+          color: MyAppColors.whiteColor
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -181,7 +187,18 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
           child: ListView(
             children: [
               DropdownButtonFormField<Course>(
-                decoration: const InputDecoration(labelText: 'Course'),
+                decoration: const InputDecoration(
+                    labelText: 'Course',
+                    labelStyle: TextStyle(
+                      color: MyAppColors.primaryColor
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: MyAppColors.primaryColor
+                      )
+                    )
+                ),
+                isExpanded: true,
                 value: _selectedCourse != null
                     ? courseProvider.enrolledCourses.firstWhere(
                         (course) => course.id == _selectedCourse!.id,
@@ -190,7 +207,12 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                 items: courseProvider.enrolledCourses
                     .map((course) => DropdownMenuItem<Course>(
                           value: course,
-                          child: Text(course.courseName),
+                          child: Text(
+                            course.courseName,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
                         ))
                     .toList(),
                 onChanged: _isEditMode
@@ -204,21 +226,54 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                     val == null ? 'Please select a course' : null,
               ),
               TextFormField(
+                cursorColor: MyAppColors.primaryColor,
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(
+                    labelText: 'Title',
+                    labelStyle: TextStyle(
+                        color: MyAppColors.primaryColor
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                        )
+                    )
+                ),
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Title required' : null,
               ),
               TextFormField(
+                cursorColor: MyAppColors.primaryColor,
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(
+                        color: MyAppColors.primaryColor
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                        )
+                    )
+                ),
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Description required' : null,
                 maxLines: 3,
               ),
               TextFormField(
+                cursorColor: MyAppColors.primaryColor,
                 controller: _maxPointsController,
-                decoration: const InputDecoration(labelText: 'Max Points'),
+                decoration: const InputDecoration(
+                    labelText: 'Max Points',
+                    labelStyle: TextStyle(
+                        color: MyAppColors.primaryColor
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                        )
+                    )
+                ),
                 keyboardType: TextInputType.number,
                 validator: (val) => val == null || int.tryParse(val) == null
                     ? 'Enter a valid number'
@@ -236,11 +291,49 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                     initialDate: DateTime.now(),
                     firstDate: DateTime.now(),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          datePickerTheme: DatePickerThemeData(
+                            backgroundColor: MyAppColors.lightBackgroundColor,
+                          ),
+                          colorScheme: const ColorScheme.light(
+                            primary: MyAppColors.primaryColor,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
                   );
                   if (pickedDate != null) {
                     final pickedTime = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            timePickerTheme: TimePickerThemeData(
+                                helpTextStyle: const TextStyle(
+                                    color: MyAppColors.darkBlueColor,
+                                    fontSize: 16
+                                ),
+                                backgroundColor: MyAppColors.lightBackgroundColor,
+                                hourMinuteColor:MyAppColors.primaryColor,
+                                hourMinuteTextColor: Colors.white,
+                                dayPeriodTextColor: MyAppColors.whiteColor,
+                                dialBackgroundColor: MyAppColors.whiteColor,
+                                dialHandColor: MyAppColors.primaryColor,
+                                dialTextColor: Colors.black,
+                                entryModeIconColor: MyAppColors.primaryColor,
+                                dayPeriodColor: MyAppColors.primaryColor
+                            ),
+                            colorScheme: const ColorScheme.light(
+                              primary: MyAppColors.primaryColor,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedTime != null) {
                       setState(() {
@@ -298,7 +391,9 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
               ],
               const SizedBox(height: 24),
               assignmentProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator(
+                color: MyAppColors.primaryColor,
+              ))
                   : Row(
                       children: [
                         Expanded(
@@ -392,7 +487,9 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                                 side: const BorderSide(
                                     color: MyAppColors.primaryColor),
                               ),
-                              child: const Text('Save as Draft'),
+                              child: const Text('Save as Draft',style: TextStyle(
+                                color: MyAppColors.primaryColor
+                              ),),
                             ),
                           ),
                         ],

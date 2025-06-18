@@ -155,9 +155,7 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
     final isDark = Provider.of<ThemeProvider>(context).isDark();
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
-      appBar: AppBar(
+        appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
@@ -165,7 +163,7 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+            color: isDark ? MyAppColors.whiteColor : MyAppColors.darkBlueColor,
           ),
         ),
         iconTheme: IconThemeData(
@@ -173,14 +171,16 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh,color: MyAppColors.darkBlueColor,),
             onPressed: _fetchPendingRequests,
             tooltip: 'Refresh',
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : _errorMessage != null
               ? Center(
                   child: Padding(
@@ -404,7 +404,9 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
                         color: isDark
                             ? Colors.grey.shade800
                             : Colors.grey.shade200,
-                        child: const Center(child: CircularProgressIndicator()),
+                        child: const Center(child: CircularProgressIndicator(
+                          color: MyAppColors.primaryColor,
+                        )),
                       );
                     }
 
@@ -448,7 +450,9 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
+                              child: const Text('Cancel',style: TextStyle(
+                                color: MyAppColors.primaryColor
+                              ),),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -513,29 +517,42 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reject Request'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Are you sure you want to reject this professor request?',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Reason for rejection (optional)',
-                hintText: 'Enter reason for rejection',
-                border: OutlineInputBorder(),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Are you sure you want to reject this professor request?',
+                style: TextStyle(fontSize: 16),
               ),
-              maxLines: 3,
-            ),
-          ],
+              const SizedBox(height: 16),
+              TextField(
+                cursorColor: MyAppColors.primaryColor,
+                controller: reasonController,
+                decoration: const InputDecoration(
+                  labelText: 'Reason for rejection (optional)',
+                  labelStyle: TextStyle(
+                    color: MyAppColors.primaryColor
+                  ),
+                  hintText: 'Enter reason for rejection',
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: MyAppColors.primaryColor
+                    )
+                  )
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel',style: TextStyle(
+              color: MyAppColors.primaryColor
+            ),),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -560,65 +577,67 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppBar(
-              title: Text(title),
-              automaticallyImplyLeading: false,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                )
-              ],
-            ),
-            InteractiveViewer(
-              panEnabled: true,
-              boundaryMargin: const EdgeInsets.all(20),
-              minScale: 0.5,
-              maxScale: 4,
-              child: Image.memory(
-                imageBytes,
-                fit: BoxFit.contain,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                title: Text(title),
+                automaticallyImplyLeading: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  )
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.open_in_new),
-              label: const Text('Open in external app'),
-              onPressed: () async {
-                try {
-                  // Save to temporary file
-                  final tempDir = await getTemporaryDirectory();
-                  final fileName =
-                      'id_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-                  final tempFile = File('${tempDir.path}/$fileName');
-                  await tempFile.writeAsBytes(imageBytes);
-
-                  Navigator.of(ctx).pop(); // Close dialog
-
-                  // Open file
-                  final result = await OpenFile.open(tempFile.path);
-                  if (result.type != ResultType.done) {
+              InteractiveViewer(
+                panEnabled: true,
+                boundaryMargin: const EdgeInsets.all(20),
+                minScale: 0.5,
+                maxScale: 4,
+                child: Image.memory(
+                  imageBytes,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.open_in_new),
+                label: const Text('Open in external app'),
+                onPressed: () async {
+                  try {
+                    // Save to temporary file
+                    final tempDir = await getTemporaryDirectory();
+                    final fileName =
+                        'id_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+                    final tempFile = File('${tempDir.path}/$fileName');
+                    await tempFile.writeAsBytes(imageBytes);
+          
+                    Navigator.of(ctx).pop(); // Close dialog
+          
+                    // Open file
+                    final result = await OpenFile.open(tempFile.path);
+                    if (result.type != ResultType.done) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text('Could not open file: ${result.message}')),
+                      );
+                    }
+                  } catch (e) {
+                    print('Error opening image in external app: $e');
                     if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content:
-                              Text('Could not open file: ${result.message}')),
+                      SnackBar(content: Text('Error opening image: $e')),
                     );
                   }
-                } catch (e) {
-                  print('Error opening image in external app: $e');
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error opening image: $e')),
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );

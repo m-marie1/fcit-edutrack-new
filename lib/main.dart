@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "FCIT EduTrack",
+      title: "EduTrack",
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).appTheme,
       initialRoute: AuthWrapper.routeName, // Start with AuthWrapper

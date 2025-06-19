@@ -43,8 +43,24 @@ class _AssignmentSubmissionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Edit Submission' : 'Submit Assignment'),
+        title: Text(_isEditMode ? 'Edit Submission' : 'Submit Assignment',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          color: MyAppColors.whiteColor
+        ),),
         backgroundColor: MyAppColors.primaryColor,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+            bottomRight:
+            Radius.circular(MediaQuery.of(context).size.width * 0.1),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

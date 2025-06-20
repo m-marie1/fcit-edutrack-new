@@ -292,7 +292,8 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
           final wifiName =
               await NetworkInfo().getWifiName(); // A quick check if connected
           if (wifiName == null) {
-            errorMessage = 'Wi-Fi is not connected or enabled.';
+            errorMessage =
+                'Wi-Fi is not connected or enabled. Make sure location services are enabled and Wi-Fi is connected';
           } else {
             // Attempt to get BSSID
             currentBSSID = await NetworkInfo().getWifiBSSID();

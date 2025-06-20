@@ -13,6 +13,7 @@ import 'package:fci_edutrack/providers/auth_provider.dart';
 import 'package:fci_edutrack/providers/course_provider.dart';
 import 'package:fci_edutrack/providers/assignment_provider.dart';
 import 'package:fci_edutrack/providers/quiz_provider.dart';
+import 'package:fci_edutrack/providers/allowed_mac_provider.dart';
 // Theme imports
 import 'package:fci_edutrack/themes/theme_provider.dart';
 // Screen imports - Admin
@@ -60,13 +61,13 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(
-          create:
-              (context) =>
-                  AuthProvider()..initialize(), // Initialize AuthProvider here
+          create: (context) =>
+              AuthProvider()..initialize(), // Initialize AuthProvider here
         ),
         ChangeNotifierProvider(create: (context) => CourseProvider()),
         ChangeNotifierProvider(create: (context) => AssignmentProvider()),
         ChangeNotifierProvider(create: (context) => AttendanceProvider()),
+        ChangeNotifierProvider(create: (context) => AllowedMacProvider()),
         // QuizProvider needs CourseProvider for fetching student quizzes
         ChangeNotifierProxyProvider<CourseProvider, QuizProvider>(
           create: (context) => QuizProvider(), // Initial creation
@@ -100,16 +101,16 @@ class MyApp extends StatelessWidget {
         AuthWrapper.routeName: (context) => const AuthWrapper(),
         LoginScreen.routeName: (context) => const LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
-        LoginOrRegisterScreen.routeName:
-            (context) => const LoginOrRegisterScreen(),
+        LoginOrRegisterScreen.routeName: (context) =>
+            const LoginOrRegisterScreen(),
 
         // Password management routes
         ForgetPassword.routeName: (context) => const ForgetPassword(),
-        PasswordConfirmationCode.routeName:
-            (context) => const PasswordConfirmationCode(),
+        PasswordConfirmationCode.routeName: (context) =>
+            const PasswordConfirmationCode(),
         ResetPasswordScreen.routeName: (context) => const ResetPasswordScreen(),
-        ChangePasswordScreen.routeName:
-            (context) => const ChangePasswordScreen(),
+        ChangePasswordScreen.routeName: (context) =>
+            const ChangePasswordScreen(),
 
         // Main navigation routes
         MyBottomNavBar.routeName: (context) => const MyBottomNavBar(),
@@ -117,19 +118,19 @@ class MyApp extends StatelessWidget {
         SettingsScreen.routeName: (context) => const SettingsScreen(),
 
         // Attendance routes
-        RegisterAttendanceScreen.routeName:
-            (context) => const RegisterAttendanceScreen(),
-        CameraPermissionScreen.routeName:
-            (context) => const CameraPermissionScreen(),
+        RegisterAttendanceScreen.routeName: (context) =>
+            const RegisterAttendanceScreen(),
+        CameraPermissionScreen.routeName: (context) =>
+            const CameraPermissionScreen(),
         'attendance_history': (context) => const AttendanceHistoryScreen(),
 
         // Assignment routes
         AssignmentScreen.routeName: (context) => const AssignmentScreen(),
         AssignmentDetails.routeName: (context) => const AssignmentDetails(),
-        AssignmentCreateScreen.routeName:
-            (context) => const AssignmentCreateScreen(),
-        AssignmentDraftsScreen.routeName:
-            (context) => const AssignmentDraftsScreen(),
+        AssignmentCreateScreen.routeName: (context) =>
+            const AssignmentCreateScreen(),
+        AssignmentDraftsScreen.routeName: (context) =>
+            const AssignmentDraftsScreen(),
         AssignmentSubmissionScreen.routeName: (context) {
           final arguments = ModalRoute.of(context)?.settings.arguments;
 
@@ -152,36 +153,34 @@ class MyApp extends StatelessWidget {
             );
           }
         },
-        AssignmentSubmissionsScreen.routeName:
-            (context) => AssignmentSubmissionsScreen(
+        AssignmentSubmissionsScreen.routeName: (context) =>
+            AssignmentSubmissionsScreen(
               assignmentId: ModalRoute.of(context)!.settings.arguments as int,
             ),
-        AssignmentGradingScreen.routeName:
-            (context) => AssignmentGradingScreen(
-              submission:
-                  ModalRoute.of(context)!.settings.arguments
-                      as AssignmentSubmission,
+        AssignmentGradingScreen.routeName: (context) => AssignmentGradingScreen(
+              submission: ModalRoute.of(context)!.settings.arguments
+                  as AssignmentSubmission,
             ),
 
         // Professor routes
-        ProfessorRequestScreen.routeName:
-            (context) => const ProfessorRequestScreen(),
+        ProfessorRequestScreen.routeName: (context) =>
+            const ProfessorRequestScreen(),
         ProfessorHomeScreen.routeName: (context) => const ProfessorHomeScreen(),
 
         // Admin routes
         AdminHomeScreen.routeName: (context) => const AdminHomeScreen(),
-        ProfessorRequestsScreen.routeName:
-            (context) => const ProfessorRequestsScreen(),
-        CourseManagementScreen.routeName:
-            (context) => const CourseManagementScreen(),
+        ProfessorRequestsScreen.routeName: (context) =>
+            const ProfessorRequestsScreen(),
+        CourseManagementScreen.routeName: (context) =>
+            const CourseManagementScreen(),
 
         // Quiz routes
-        QuizManagementScreen.routeName:
-            (context) => const QuizManagementScreen(),
+        QuizManagementScreen.routeName: (context) =>
+            const QuizManagementScreen(),
         QuizCreationScreen.routeName: (context) => const QuizCreationScreen(),
         QuizDraftsScreen.routeName: (context) => const QuizDraftsScreen(),
-        StudentQuizListScreen.routeName:
-            (context) => const StudentQuizListScreen(),
+        StudentQuizListScreen.routeName: (context) =>
+            const StudentQuizListScreen(),
 
         // Misc routes
         ExplainScreens.routeName: (context) => const ExplainScreens(),

@@ -157,13 +157,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title:  Row(
+            title: Row(
               children: [
-                const Icon(Icons.assignment_outlined, size: 30,color: MyAppColors.darkBlueColor,),
-                Text(
-                    ' Assignments',
-                    style: Theme.of(context).textTheme.titleLarge
-                )
+                const Icon(
+                  Icons.assignment_outlined,
+                  size: 30,
+                  color: MyAppColors.darkBlueColor,
+                ),
+                Text(' Assignments',
+                    style: Theme.of(context).textTheme.titleLarge)
               ],
             ),
             backgroundColor: Colors.transparent,
@@ -213,9 +215,10 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                     ? MyAppColors.primaryDarkColor
                     : MyAppColors.lightBackgroundColor),
             child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator(
-              color: MyAppColors.primaryColor,
-            ))
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: MyAppColors.primaryColor,
+                  ))
                 : _isProfessor
                     ? (assignments.isEmpty
                         ? const Center(child: Text('No assignments found.'))
@@ -250,11 +253,12 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Padding(
+                              Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Text('Active Assignments',
-                                    style: Theme.of(context).textTheme.titleMedium
-                                ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
                               ),
                               ...assignments.map((assignment) => AssignmentCard(
                                   assignment: assignment,
@@ -262,11 +266,12 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   isDraft: false)),
                               const SizedBox(height: 16),
                               const Divider(),
-                               Padding(
+                              Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Text('Submission History',
-                                    style: Theme.of(context).textTheme.titleMedium
-                                ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
                               ),
                               FutureBuilder<List<AssignmentSubmission>>(
                                 future: _historyFuture,
@@ -289,7 +294,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   return Column(
                                     children: history.map((sub) {
                                       return Card(
-                                         color: MyAppColors.whiteColor,
+                                        color: MyAppColors.whiteColor,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 16, vertical: 8),
                                         child: ExpansionTile(
@@ -414,11 +419,13 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                     setState(() {});
                   },
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(30)
-                  ),
+                      borderRadius: BorderRadius.circular(30)),
                   backgroundColor: MyAppColors.primaryColor,
                   tooltip: 'Create Assignment',
-                  child: const Icon(Icons.add,color: MyAppColors.whiteColor,),
+                  child: const Icon(
+                    Icons.add,
+                    color: MyAppColors.whiteColor,
+                  ),
                 )
               : null,
         );

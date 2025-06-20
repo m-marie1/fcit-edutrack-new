@@ -10,7 +10,7 @@ import 'package:network_info_plus/network_info_plus.dart'; // Import for network
 import 'package:permission_handler/permission_handler.dart'; // Import for permissions
 import 'dart:io' show Platform; // To check platform
 import 'package:flutter/services.dart'; // For PlatformException
-import 'package:shared_preferences/shared_preferences.dart'; // For reading target BSSID
+import 'package:fci_edutrack/providers/allowed_mac_provider.dart';
 
 class RegisterAttendanceScreen extends StatefulWidget {
   static const String routeName = 'register_attendance_screen';
@@ -26,33 +26,27 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
   final bool _isLoading = false;
   String? _error;
   String? _success;
-  String _targetBSSID = '88:QQ:5L:9B:KS:4M'; // Default Target Wi-Fi MAC Address
+  List<String> _allowedBSSIDs = []; // List fetched from backend
   bool _isLoadingBSSID = false; // To manage loading state for BSSID setting
   bool _isCheckingNetwork = false; // To manage loading state for network check
 
   @override
   void initState() {
     super.initState();
-    _loadTargetBSSID(); // Load custom BSSID on init
+    _fetchAllowedBSSIDs(); // Load allowed MAC addresses from backend
     _fetchEnrolledCourses();
   }
 
-  // Load target BSSID from SharedPreferences
-  Future<void> _loadTargetBSSID() async {
+  // Fetch allowed MAC addresses from backend via provider
+  Future<void> _fetchAllowedBSSIDs() async {
     setState(() => _isLoadingBSSID = true);
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final customBSSID = prefs.getString('custom_target_bssid');
-      if (customBSSID != null && customBSSID.isNotEmpty) {
-        _targetBSSID = customBSSID;
-      } else {
-        // Use default if nothing is saved or it's empty
-        _targetBSSID = '88:QQ:5L:9B:KS:4M';
-      }
+      final provider = Provider.of<AllowedMacProvider>(context, listen: false);
+      await provider.fetchAllowedMacs();
+      _allowedBSSIDs = provider.allowedMacs;
     } catch (e) {
-      // Handle error loading preferences, maybe log it
-      print("Error loading target BSSID: $e");
-      _targetBSSID = '88:QQ:5L:9B:KS:4M'; // Fallback to default
+      print("Error fetching allowed BSSIDs: $e");
+      _allowedBSSIDs = [];
     } finally {
       if (mounted) {
         setState(() => _isLoadingBSSID = false);
@@ -78,16 +72,18 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         Provider.of<AttendanceProvider>(context, listen: false);
 
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
           children: [
-            const Icon(Icons.pin_outlined , size: 30, color: MyAppColors.darkBlueColor,),
-            Text(
-                ' Record Attendance',
-                style: Theme.of(context).textTheme.titleMedium
+            const Icon(
+              Icons.pin_outlined,
+              size: 30,
+              color: MyAppColors.darkBlueColor,
             ),
+            Text(' Record Attendance',
+                style: Theme.of(context).textTheme.titleMedium),
           ],
         ),
         iconTheme: IconThemeData(
@@ -95,7 +91,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         ),
       ),
       body: courseProvider.isLoading // Check loading state from CourseProvider
-          ? const Center(child: CircularProgressIndicator(color: MyAppColors.primaryColor,))
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: MyAppColors.primaryColor,
+            ))
           : courseProvider.enrolledCourses.isEmpty
               ? _buildNoCourses(context, isDark) // Pass context
               : _buildCourseList(
@@ -157,7 +156,7 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
       List<Course> courses, AttendanceProvider attendanceProvider) {
     // Reload BSSID when refreshing the list as well
     final refreshAction = () async {
-      await _loadTargetBSSID(); // Reload BSSID setting
+      await _fetchAllowedBSSIDs(); // Reload allowed BSSIDs from backend
       await Provider.of<CourseProvider>(context, listen: false)
           .ensureEnrolledCoursesFetched(); // Fetch courses
     };
@@ -166,9 +165,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
       color: MyAppColors.primaryColor,
       onRefresh: refreshAction,
       child: _isLoadingBSSID // Show loading indicator while BSSID loads
-          ? const Center(child: CircularProgressIndicator(
-        color: MyAppColors.primaryColor,
-      ))
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: MyAppColors.primaryColor,
+            ))
           : ListView.builder(
               itemCount: courses.length,
               itemBuilder: (context, index) {
@@ -187,9 +187,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                       child: const Icon(Icons.book_outlined,
                           color: MyAppColors.primaryColor),
                     ),
-                    title: Text(course.courseName,style: TextStyle(
-                      color: MyAppColors.darkBlueColor
-                    ),),
+                    title: Text(
+                      course.courseName,
+                      style: TextStyle(color: MyAppColors.darkBlueColor),
+                    ),
                     subtitle: Text(course.courseCode),
                     // Show indicator in trailing if checking this specific item (optional enhancement)
                     // For now, just disable tap globally
@@ -198,7 +199,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.keyboard_arrow_right,color: MyAppColors.darkBlueColor,),
+                        : const Icon(
+                            Icons.keyboard_arrow_right,
+                            color: MyAppColors.darkBlueColor,
+                          ),
                     onTap: _isCheckingNetwork // Disable tap while checking
                         ? null
                         : () {
@@ -284,7 +288,6 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
           );
         }
       } else {
-
         String? currentBSSID;
         String? errorMessage;
 
@@ -297,15 +300,15 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
             currentBSSID = await NetworkInfo().getWifiBSSID();
             if (currentBSSID == null) {
               errorMessage =
-              'Could not retrieve Wi-Fi BSSID. Ensure location services are enabled.';
+                  'Could not retrieve Wi-Fi BSSID. Ensure location services are enabled.';
             }
           }
         } on PlatformException catch (e) {
           errorMessage =
-          'Network check failed: ${e.message}. Ensure location services are enabled.';
+              'Network check failed: ${e.message}. Ensure location services are enabled.';
         } catch (e) {
           errorMessage =
-          'An unexpected error occurred while checking the network: ${e.toString()}';
+              'An unexpected error occurred while checking the network: ${e.toString()}';
         }
 
         if (errorMessage != null) {
@@ -318,26 +321,35 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
             );
           }
         } else {
-          // Normalize BSSIDs
+          // Normalize BSSID helper
           String normalizeBSSID(String? bssid) =>
               bssid?.toLowerCase().replaceAll(RegExp(r'[:-]'), '') ?? '';
 
-          final normalizedTarget = normalizeBSSID(_targetBSSID);
           final normalizedCurrent = normalizeBSSID(currentBSSID);
 
-          if (normalizedCurrent == normalizedTarget) {
+          // If no allowed BSSIDs -> attendance open from anywhere
+          if (_allowedBSSIDs.isEmpty) {
             if (mounted) {
               _showCodeEntryDialog(context, course, attendanceProvider);
             }
           } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      'You are not connected to the designated Wi-Fi network ($_targetBSSID). Current: ${currentBSSID ?? "Not Found"}'),
-                  backgroundColor: Colors.orange,
-                ),
-              );
+            final normalizedAllowed =
+                _allowedBSSIDs.map(normalizeBSSID).toList();
+
+            if (normalizedAllowed.contains(normalizedCurrent)) {
+              if (mounted) {
+                _showCodeEntryDialog(context, course, attendanceProvider);
+              }
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'You are not connected to any of the designated Wi-Fi networks. Current: ${currentBSSID ?? "Not Found"}'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
             }
           }
         }
@@ -350,7 +362,6 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
       }
     }
   }
-
 
   void _showCodeEntryDialog(BuildContext context, Course course,
       AttendanceProvider attendanceProvider) {
@@ -367,9 +378,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: MyAppColors.whiteColor,
-              title: Text('Record Attendance for ${course.courseCode}',style: TextStyle(
-                color: MyAppColors.darkBlueColor
-              ),),
+              title: Text(
+                'Record Attendance for ${course.courseCode}',
+                style: TextStyle(color: MyAppColors.darkBlueColor),
+              ),
               content: Form(
                 key: formKey,
                 child: Column(
@@ -383,14 +395,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                       controller: codeController,
                       decoration: const InputDecoration(
                         labelText: 'Verification Code',
-                        labelStyle: TextStyle(
-                          color: MyAppColors.primaryColor
-                        ),
+                        labelStyle: TextStyle(color: MyAppColors.primaryColor),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: MyAppColors.primaryColor
-                          )
-                        ),
+                            borderSide:
+                                BorderSide(color: MyAppColors.primaryColor)),
                         prefixIcon: Icon(Icons.pin),
                       ),
                       keyboardType: TextInputType.text,
@@ -417,9 +425,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Cancel',style: TextStyle(
-                    color: MyAppColors.primaryColor
-                  ),),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: MyAppColors.primaryColor),
+                  ),
                   onPressed: () {
                     Navigator.of(dialogContext).pop(); // Close the dialog
                   },

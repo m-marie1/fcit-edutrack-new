@@ -41,16 +41,21 @@ class _CoursesScreenState extends State<CoursesScreen>
     final courseProvider = Provider.of<CourseProvider>(context);
 
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
           children: [
-            const Icon(Icons.school_outlined,color: MyAppColors.darkBlueColor,size: 35,),
+            const Icon(
+              Icons.school_outlined,
+              color: MyAppColors.darkBlueColor,
+              size: 35,
+            ),
             Text(
               ' Courses',
               style: TextStyle(
-                color: isDark ? MyAppColors.whiteColor : MyAppColors.darkBlueColor,
+                color:
+                    isDark ? MyAppColors.whiteColor : MyAppColors.darkBlueColor,
               ),
             )
           ],
@@ -72,16 +77,18 @@ class _CoursesScreenState extends State<CoursesScreen>
         children: [
           // All Courses Tab
           courseProvider.isLoading
-              ? const Center(child: CircularProgressIndicator(
-            color: MyAppColors.primaryColor,
-          ))
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: MyAppColors.primaryColor,
+                ))
               : _buildCoursesList(courseProvider.courses, true),
 
           // My Courses Tab
           courseProvider.isLoading
-              ? const Center(child: CircularProgressIndicator(
-            color: MyAppColors.primaryColor,
-          ))
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: MyAppColors.primaryColor,
+                ))
               : _buildCoursesList(courseProvider.enrolledCourses, false),
         ],
       ),
@@ -92,11 +99,13 @@ class _CoursesScreenState extends State<CoursesScreen>
                 Provider.of<CourseProvider>(context, listen: false)
                     .fetchCourses();
               },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(27)
-        ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(27)),
               backgroundColor: MyAppColors.primaryColor,
-              child: const Icon(Icons.refresh,color: MyAppColors.whiteColor,),
+              child: const Icon(
+                Icons.refresh,
+                color: MyAppColors.whiteColor,
+              ),
             )
           : null,
     );
@@ -135,9 +144,8 @@ class _CoursesScreenState extends State<CoursesScreen>
       itemBuilder: (context, index) {
         final course = courses[index];
         return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20)
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           elevation: 2,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           color: isDark ? MyAppColors.darkCardColor : Colors.white,
@@ -248,9 +256,10 @@ class _CoursesScreenState extends State<CoursesScreen>
                     // Switch to My Courses tab
                     _tabController.animateTo(1);
                   },
-                  child: const Text('OK',style: TextStyle(
-                    color: MyAppColors.primaryColor
-                  ),),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: MyAppColors.primaryColor),
+                  ),
                 ),
               ],
             ),

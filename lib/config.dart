@@ -77,6 +77,11 @@ class Config {
   // Professor request endpoint
   static const String professorRequestUrl = '$baseUrl/api/professor-requests';
 
+  // Allowed MAC address endpoints
+  static const String allowedMacsUrl = '$baseUrl/api/allowed-mac-addresses';
+  static const String allowedMacAdminUrl =
+      '$baseUrl/api/admin/allowed-mac-addresses';
+
   // Helper method to get the full URL for a file path
   static String getFileUrl(String filePath) {
     // If the path already contains the full URL, return it as is

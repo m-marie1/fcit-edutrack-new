@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fci_edutrack/style/my_app_colors.dart';
 // Keep if needed for permissions later
 import 'package:provider/provider.dart';
-import 'package:permission_handler/permission_handler.dart'; // Import permission_handler
+// import 'package:permission_handler/permission_handler.dart'; // Storage permission not required for temp download
 import '../../providers/quiz_provider.dart'; // Import QuizProvider
 import '../../models/quiz_models.dart';
 import '../../models/course_model.dart'; // Import Course model
@@ -37,91 +37,52 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
   }
 
   Future<void> _downloadSubmissions(Quiz quiz) async {
-    // Request both read and write permissions
-    var statusStorage = await Permission.storage.request();
-    var statusExternal = await Permission.manageExternalStorage.request();
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+              SizedBox(width: 16),
+              Text('Downloading submissions...'),
+            ],
+          ),
+          duration: Duration(seconds: 10),
+        ),
+      );
 
-    if (statusStorage.isGranted || statusExternal.isGranted) {
-      // 2. Permission Granted: Proceed with download
-      try {
-        // Show loading indicator
+      final quizProvider = Provider.of<QuizProvider>(context, listen: false);
+      final result = await quizProvider.downloadQuizSubmissions(quiz.id!);
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Row(
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-                SizedBox(width: 16),
-                Text('Downloading submissions...'),
-              ],
-            ),
-            duration: Duration(seconds: 10), // Show longer for download
+            content: Text('Submissions downloaded successfully'),
+            backgroundColor: Colors.green,
           ),
         );
-
-        final quizProvider = Provider.of<QuizProvider>(context, listen: false);
-        final result = await quizProvider.downloadQuizSubmissions(quiz.id!);
-
-        // Hide loading indicator
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-        if (result['success']) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  'Submissions downloaded successfully to ${result['filePath'] ?? 'Downloads'}'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text(result['message'] ?? 'Failed to download submissions'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context)
-            .hideCurrentSnackBar(); // Hide loading on error
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error downloading submissions: $e'),
+            content:
+                Text(result['message'] ?? 'Failed to download submissions'),
             backgroundColor: Colors.red,
           ),
         );
       }
-    } else if (statusStorage.isPermanentlyDenied ||
-        statusExternal.isPermanentlyDenied) {
-      // Permission Permanently Denied: Guide user to settings
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-                'Storage permission is permanently denied. Please enable it in app settings.'),
-            backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'Settings',
-              onPressed: () {
-                openAppSettings();
-              },
-            ),
-          ),
-        );
-      }
-    } else {
-      // Permission Denied: Show info message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Storage permission is required to download files. Please grant the permission when requested.'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error downloading submissions: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

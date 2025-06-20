@@ -145,6 +145,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
         title:  Row(
           children: [
             Icon(Icons.quiz_outlined,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor,size: 30,),
+
             Text(
               ' Quiz Management',
               style: TextStyle(
@@ -193,7 +194,8 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
       body: Consumer<QuizProvider>(
         builder: (context, quizProvider, child) {
           if (quizProvider.isLoading && quizProvider.professorQuizzes.isEmpty) {
-            return const Center(child: CircularProgressIndicator(
+            return const Center(
+                child: CircularProgressIndicator(
               color: MyAppColors.primaryColor,
             ));
           }
@@ -209,9 +211,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: MyAppColors.primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(30)
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         onPressed: () {
           Navigator.pushNamed(context, QuizCreationScreen.routeName)
               .then((value) {
@@ -220,7 +220,10 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
           });
         },
         tooltip: 'Create Quiz',
-        child: const Icon(Icons.add,color: MyAppColors.whiteColor,),
+        child: const Icon(
+          Icons.add,
+          color: MyAppColors.whiteColor,
+        ),
       ),
     );
   }
@@ -377,17 +380,25 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                     alignment: MainAxisAlignment.spaceAround,
                     children: [
                       TextButton.icon(
-                        icon: const Icon(Icons.visibility,color: MyAppColors.primaryColor,),
-                        label: const Text('Submissions',style: TextStyle(
-                          color: MyAppColors.primaryColor
-                        ),), // Shortened label
+                        icon: const Icon(
+                          Icons.visibility,
+                          color: MyAppColors.primaryColor,
+                        ),
+                        label: const Text(
+                          'Submissions',
+                          style: TextStyle(color: MyAppColors.primaryColor),
+                        ), // Shortened label
                         onPressed: () => _viewSubmissions(quiz),
                       ),
                       TextButton.icon(
-                        icon: const Icon(Icons.download,color: MyAppColors.primaryColor,),
-                        label: const Text('Download',style: TextStyle(
-                          color: MyAppColors.primaryColor
-                        ),), // Shortened label
+                        icon: const Icon(
+                          Icons.download,
+                          color: MyAppColors.primaryColor,
+                        ),
+                        label: const Text(
+                          'Download',
+                          style: TextStyle(color: MyAppColors.primaryColor),
+                        ), // Shortened label
                         onPressed: () => _downloadSubmissions(quiz),
                       ),
                       IconButton(

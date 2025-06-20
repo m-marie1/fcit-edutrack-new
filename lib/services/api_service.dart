@@ -1408,4 +1408,39 @@ class ApiService {
     }
     return null;
   }
+
+  // ======================== Allowed MAC Address APIs ========================
+  Future<Map<String, dynamic>> getAllowedMacAddresses() async {
+    final response = await http.get(
+      Uri.parse(Config.allowedMacsUrl),
+      headers: await _getAuthHeaders(),
+    );
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>> addAllowedMacAddress(String macAddress) async {
+    final response = await http.post(
+      Uri.parse(Config.allowedMacAdminUrl),
+      headers: await _getAuthHeaders(),
+      body: jsonEncode({'macAddress': macAddress}),
+    );
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>> deleteAllowedMacAddress(
+      String macAddress) async {
+    final response = await http.delete(
+      Uri.parse('${Config.allowedMacAdminUrl}/$macAddress'),
+      headers: await _getAuthHeaders(),
+    );
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>> clearAllowedMacAddresses() async {
+    final response = await http.delete(
+      Uri.parse(Config.allowedMacAdminUrl),
+      headers: await _getAuthHeaders(),
+    );
+    return jsonDecode(response.body);
+  }
 }

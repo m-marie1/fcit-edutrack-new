@@ -130,9 +130,12 @@ class _ProfessorAttendanceManagementScreenState
                 Text(' Attendance Management',style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                 ),),
+
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
+            ),
             // Section 1: Select Course to Create Session
             Text(
               '1. Create Attendance Session',
@@ -208,7 +211,8 @@ class _ProfessorAttendanceManagementScreenState
   Widget _buildCourseListForSessionCreation(CourseProvider courseProvider) {
     if (courseProvider.isLoading && courseProvider.enrolledCourses.isEmpty) {
       // Show loading only if courses haven't been loaded yet
-      return const Center(child: CircularProgressIndicator(
+      return const Center(
+          child: CircularProgressIndicator(
         color: MyAppColors.primaryColor,
       ));
     }
@@ -256,6 +260,7 @@ class _ProfessorAttendanceManagementScreenState
             borderRadius: BorderRadiusGeometry.circular(20)
           ),
           color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -301,7 +306,8 @@ class _ProfessorAttendanceManagementScreenState
   Widget _buildActiveSessionsList(AttendanceProvider attendanceProvider) {
     if (attendanceProvider.isLoading &&
         attendanceProvider.activeSessions.isEmpty) {
-      return const Center(child: CircularProgressIndicator(
+      return const Center(
+          child: CircularProgressIndicator(
         color: MyAppColors.primaryColor,
       ));
     }
@@ -492,10 +498,12 @@ class _ProfessorAttendanceManagementScreenState
     }
 
     return Card(
+
       color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(20)
       ),
+
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -552,13 +560,17 @@ class _ProfessorAttendanceManagementScreenState
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2,color: MyAppColors.primaryColor,),)
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: MyAppColors.primaryColor,
+                        ),
+                      )
                     : const Icon(Icons.download_outlined),
                 label: Text(_isDownloading
                     ? 'Downloading...'
                     : 'Download Spreadsheet (CSV)'),
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: MyAppColors.primaryColor),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: MyAppColors.primaryColor),
               ),
             ),
           ],
@@ -630,7 +642,7 @@ class _ProfessorAttendanceManagementScreenState
         return Theme(
           data: Theme.of(context).copyWith(
             datePickerTheme: DatePickerThemeData(
-                backgroundColor: MyAppColors.lightBackgroundColor,
+              backgroundColor: MyAppColors.lightBackgroundColor,
             ),
             colorScheme: const ColorScheme.light(
               primary: MyAppColors.primaryColor,
@@ -639,7 +651,6 @@ class _ProfessorAttendanceManagementScreenState
           child: child!,
         );
       },
-
     );
     if (picked != null && picked != _selectedReportDate) {
       setState(() {
@@ -660,7 +671,8 @@ class _ProfessorAttendanceManagementScreenState
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator(
+      builder: (context) => const Center(
+          child: CircularProgressIndicator(
         color: MyAppColors.primaryColor,
       )),
     );
@@ -708,9 +720,10 @@ class _ProfessorAttendanceManagementScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close',style: TextStyle(
-              color: MyAppColors.primaryColor
-            ),),
+            child: const Text(
+              'Close',
+              style: TextStyle(color: MyAppColors.primaryColor),
+            ),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:fci_edutrack/models/assignment_model.dart';
 import 'package:fci_edutrack/providers/assignment_provider.dart';
 import 'package:fci_edutrack/config.dart';
 import '../../style/my_app_colors.dart';
+import '../../themes/theme_provider.dart';
 import '../../utils/date_formatter.dart';
 import '../../services/api_service.dart';
 import 'dart:typed_data';
@@ -209,7 +210,9 @@ class _AssignmentGradingScreenState extends State<AssignmentGradingScreen> {
         child: ListView(
           children: [
             Text('Submission by ${sub.studentName ?? "Unknown Student"}',
-                style: Theme.of(context).textTheme.titleMedium),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                )),
             const SizedBox(height: 8),
             const Text('Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
             Text(sub.notes),

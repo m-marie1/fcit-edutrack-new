@@ -163,7 +163,7 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.darkBlueColor,
+            color: isDark ? MyAppColors.primaryColor : MyAppColors.darkBlueColor,
           ),
         ),
         iconTheme: IconThemeData(
@@ -442,7 +442,10 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Approve Request'),
+                          title:  Text('Approve Request',style: TextStyle(
+                            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                          ),),
+                          backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                           content: const Text(
                             'Are you sure you want to approve this professor request? '
                             'This will create a new professor account with access to the system.',
@@ -516,7 +519,10 @@ class _ProfessorRequestsScreenState extends State<ProfessorRequestsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reject Request'),
+        title:  Text('Reject Request',style: TextStyle(
+          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+        ),),
+        backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

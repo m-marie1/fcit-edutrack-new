@@ -111,20 +111,17 @@ class _QuizSubmissionsScreenState extends State<QuizSubmissionsScreen> {
     final isDark = Provider.of<ThemeProvider>(context).isDark();
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
+       appBar: AppBar(
+        backgroundColor: MyAppColors.primaryColor,
         elevation: 0,
         title: Text(
           'Submissions: ${widget.quizTitle}',
-          style: TextStyle(
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
-            fontWeight: FontWeight.bold,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: MyAppColors.whiteColor
           ),
         ),
-        iconTheme: IconThemeData(
-          color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+        iconTheme: const IconThemeData(
+          color:  MyAppColors.whiteColor ,
         ),
         actions: [
           IconButton(
@@ -138,9 +135,17 @@ class _QuizSubmissionsScreenState extends State<QuizSubmissionsScreen> {
             tooltip: 'Refresh',
           ),
         ],
+         leading: IconButton(
+           onPressed: () {
+             Navigator.pop(context);
+           },
+           icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
+         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : _errorMessage != null
               ? Center(
                   child: Column(
@@ -171,27 +176,37 @@ class _QuizSubmissionsScreenState extends State<QuizSubmissionsScreen> {
                       itemBuilder: (context, index) {
                         final submission = _submissions[index];
                         return Card(
+                          color: isDark?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                           margin: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 8,
                           ),
                           child: ListTile(
                             title: Text(
-                                submission['studentName'] ?? 'Unknown Student'),
+                                submission['studentName'] ?? 'Unknown Student',style: TextStyle(
+                              color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                            ),),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    'Score: ${submission['score']}/${submission['maxScore']}'),
+                                    'Score: ${submission['score']}/${submission['maxScore']}',style: TextStyle(
+                                  color: isDark?MyAppColors.whiteColor:MyAppColors.blackColor
+                                ),),
                                 Text(
                                   'Percentage: ${((submission['score'] / submission['maxScore']) * 100).toStringAsFixed(1)}%',
+                                  style: TextStyle(
+                                    color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                                  ),
                                 ),
                                 Text(
-                                    'Submitted: ${submission['submissionDate']}'),
+                                    'Submitted: ${submission['submissionDate']}',style: TextStyle(
+                                  color: isDark?MyAppColors.whiteColor:MyAppColors.blackColor
+                                ),),
                               ],
                             ),
                             trailing: IconButton(
-                              icon: const Icon(Icons.visibility),
+                              icon:  Icon(Icons.visibility,color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,),
                               onPressed: () {
                                 Navigator.push(
                                   context,

@@ -10,7 +10,9 @@ import 'package:fci_edutrack/screens/professor/attendance_recording_screen.dart'
 import 'package:fci_edutrack/style/my_app_colors.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:path_provider/path_provider.dart'; // For file path
-import 'package:open_file/open_file.dart'; // To open the downloaded file
+import 'package:open_file/open_file.dart';
+
+import '../../themes/theme_provider.dart'; // To open the downloaded file
 // TODO: Import the screen containing the main course list if needed for "Browse Courses"
 // TODO: Import or create screen/widget for displaying attendees
 
@@ -111,6 +113,7 @@ class _ProfessorAttendanceManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDark();
     // Use multiple Consumers or nested Consumers if needed, or read providers directly in build methods
     return Scaffold(
       // AppBar might be handled by MyBottomNavBar, or add one here if needed
@@ -123,8 +126,10 @@ class _ProfessorAttendanceManagementScreenState
           children: [
             Row(
               children: [
-                const Icon(Icons.timer_outlined,size: 30,color: MyAppColors.darkBlueColor,),
-                Text(' Attendance Management',style: Theme.of(context).textTheme.titleMedium,),
+                 Icon(Icons.timer_outlined,size: 30,color: isDark? MyAppColors.primaryColor:MyAppColors.darkBlueColor,),
+                Text(' Attendance Management',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                ),),
               ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height*0.03,),
@@ -134,6 +139,7 @@ class _ProfessorAttendanceManagementScreenState
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0, // Adjusted font size
+                  color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                   ),
             ),
             const SizedBox(height: 8),
@@ -151,6 +157,7 @@ class _ProfessorAttendanceManagementScreenState
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0, // Adjusted font size
+                color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                   ),
             ),
             const SizedBox(height: 8),
@@ -167,6 +174,7 @@ class _ProfessorAttendanceManagementScreenState
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0, // Adjusted font size
+                   color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                   ),
             ),
             const SizedBox(height: 8),
@@ -182,6 +190,7 @@ class _ProfessorAttendanceManagementScreenState
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0, // Adjusted font size
+                   color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                   ),
             ),
             const SizedBox(height: 8),
@@ -246,7 +255,7 @@ class _ProfessorAttendanceManagementScreenState
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(20)
           ),
-          color: MyAppColors.whiteColor,
+          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -254,7 +263,8 @@ class _ProfessorAttendanceManagementScreenState
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             title: Text(
               '${course.courseCode} - ${course.courseName}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style:  TextStyle(fontWeight: FontWeight.bold,
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor ),
             ),
             subtitle: Text(
               course.description ?? 'No description',
@@ -308,7 +318,7 @@ class _ProfessorAttendanceManagementScreenState
         return Card(
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),
-          color: isExpired ? Colors.grey.shade300 : null,
+          color: isExpired ? Provider.of<ThemeProvider>(context).isDark()?Colors.grey.shade800:Colors.grey.shade300 : null,
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
             title: Text(
@@ -375,7 +385,7 @@ class _ProfessorAttendanceManagementScreenState
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(20)
       ),
-      color: MyAppColors.whiteColor,
+      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -384,6 +394,7 @@ class _ProfessorAttendanceManagementScreenState
           children: [
             // Course Dropdown
             DropdownButtonFormField<Course>(
+              dropdownColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
               // Use ID-based comparison to find the matching course
               value: _selectedCourseForReport != null
                   ? enrolledCourses.firstWhere(
@@ -396,6 +407,9 @@ class _ProfessorAttendanceManagementScreenState
                   child: Text(
                     '${course.courseCode} - ${course.courseName}',
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                    ),
                   ),
                 );
               }).toList(),
@@ -404,9 +418,16 @@ class _ProfessorAttendanceManagementScreenState
                   _selectedCourseForReport = newValue;
                 });
               },
-              decoration: const InputDecoration(
+              decoration:  const InputDecoration(
                 labelText: 'Select Course',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                  color: MyAppColors.primaryColor
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: MyAppColors.primaryColor
+                  )
+                ),
               ),
               isExpanded: true,
             ),
@@ -415,8 +436,11 @@ class _ProfessorAttendanceManagementScreenState
             ListTile(
               title: Text(_selectedReportDate == null
                   ? 'Select Date'
-                  : 'Date: ${DateFormat('yyyy-MM-dd').format(_selectedReportDate!)}'),
-              trailing: const Icon(Icons.calendar_today),
+                  : 'Date: ${DateFormat('yyyy-MM-dd').format(_selectedReportDate!)}',
+                  style: TextStyle(
+                    color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.darkBlueColor
+                  ),),
+              trailing:  Icon(Icons.calendar_today,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.darkBlueColor,),
               onTap: _pickReportDate,
             ),
             const SizedBox(height: 16),
@@ -427,8 +451,12 @@ class _ProfessorAttendanceManagementScreenState
                         _selectedReportDate == null)
                     ? null
                     : _viewDailyAttendees,
-                icon: const Icon(Icons.people_alt_outlined),
-                label: const Text('View Daily Attendees'),
+                icon: const Icon(Icons.people_alt_outlined,color: Colors.grey,),
+                label:  const Text('View Daily Attendees',
+                  style: TextStyle(
+                      color:Colors.grey
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
               ),
             ),
@@ -464,7 +492,7 @@ class _ProfessorAttendanceManagementScreenState
     }
 
     return Card(
-      color: MyAppColors.whiteColor,
+      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(20)
       ),
@@ -476,6 +504,7 @@ class _ProfessorAttendanceManagementScreenState
           children: [
             // Course Dropdown (similar to daily reports)
             DropdownButtonFormField<Course>(
+              dropdownColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
               // Use ID-based comparison to find the matching course
               value: _selectedCourseForReport != null
                   ? enrolledCourses.firstWhere(
@@ -488,6 +517,9 @@ class _ProfessorAttendanceManagementScreenState
                   child: Text(
                     '${course.courseCode} - ${course.courseName}',
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                    ),
                   ),
                 );
               }).toList(),
@@ -498,7 +530,14 @@ class _ProfessorAttendanceManagementScreenState
               },
               decoration: const InputDecoration(
                 labelText: 'Select Course',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                  color: MyAppColors.primaryColor
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: MyAppColors.primaryColor
+                  )
+                ),
               ),
               isExpanded: true,
             ),
@@ -638,9 +677,12 @@ class _ProfessorAttendanceManagementScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: MyAppColors.whiteColor,
+        backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
         title: Text(
-            'Attendees for ${DateFormat('MMM d, yyyy').format(_selectedReportDate!)}'),
+            'Attendees for ${DateFormat('MMM d, yyyy').format(_selectedReportDate!)}',
+          style: TextStyle(
+            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+          ),),
         content: SizedBox(
           width: double.maxFinite,
           child: attendees.isEmpty
@@ -651,10 +693,14 @@ class _ProfessorAttendanceManagementScreenState
                   itemBuilder: (context, index) {
                     final attendee = attendees[index];
                     return ListTile(
-                      leading: const Icon(
-                          Icons.person_pin_circle_outlined), // Different icon
-                      title: Text(attendee['fullName'] ?? 'N/A'),
-                      subtitle: Text(attendee['username'] ?? 'N/A'),
+                      leading:  Icon(
+                          Icons.person_pin_circle_outlined,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.darkBlueColor,), // Different icon
+                      title: Text(attendee['fullName'] ?? 'N/A',style: TextStyle(
+                        color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                      ),),
+                      subtitle: Text(attendee['username'] ?? 'N/A',style: TextStyle(
+                        color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                      ),),
                     );
                   },
                 ),

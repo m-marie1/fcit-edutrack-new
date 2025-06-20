@@ -83,15 +83,14 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         elevation: 0,
         title: Row(
           children: [
-            const Icon(Icons.pin_outlined , size: 30, color: MyAppColors.darkBlueColor,),
+            Icon(Icons.pin_outlined , size: 30, color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,),
             Text(
                 ' Record Attendance',
-                style: Theme.of(context).textTheme.titleMedium
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                )
             ),
           ],
-        ),
-        iconTheme: IconThemeData(
-          color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
         ),
       ),
       body: courseProvider.isLoading // Check loading state from CourseProvider
@@ -174,7 +173,7 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
               itemBuilder: (context, index) {
                 final course = courses[index];
                 return Card(
-                  color: MyAppColors.whiteColor,
+                  color: isDark?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 2,
@@ -188,7 +187,7 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                           color: MyAppColors.primaryColor),
                     ),
                     title: Text(course.courseName,style: TextStyle(
-                      color: MyAppColors.darkBlueColor
+                      color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                     ),),
                     subtitle: Text(course.courseCode),
                     // Show indicator in trailing if checking this specific item (optional enhancement)
@@ -365,53 +364,55 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: MyAppColors.whiteColor,
+              backgroundColor: Provider.of<ThemeProvider>(context).isDark()? MyAppColors.secondaryDarkColor: MyAppColors.whiteColor,
               title: Text('Record Attendance for ${course.courseCode}',style: TextStyle(
-                color: MyAppColors.darkBlueColor
+                color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
               ),),
               content: Form(
                 key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min, // Prevent excessive height
-                  children: [
-                    const Text(
-                        'Enter the 6-character code provided by your professor:'),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      cursorColor: MyAppColors.primaryColor,
-                      controller: codeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Verification Code',
-                        labelStyle: TextStyle(
-                          color: MyAppColors.primaryColor
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // Prevent excessive height
+                    children: [
+                      const Text(
+                          'Enter the 6-character code provided by your professor:'),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        cursorColor: MyAppColors.primaryColor,
+                        controller: codeController,
+                        decoration: const InputDecoration(
+                          labelText: 'Verification Code',
+                          labelStyle: TextStyle(
                             color: MyAppColors.primaryColor
-                          )
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: MyAppColors.primaryColor
+                            )
+                          ),
+                          prefixIcon: Icon(Icons.pin),
                         ),
-                        prefixIcon: Icon(Icons.pin),
+                        keyboardType: TextInputType.text,
+                        maxLength: 6,
+                        textCapitalization: TextCapitalization.characters,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter the code';
+                          }
+                          if (value.trim().length != 6) {
+                            return 'Code must be 6 characters';
+                          }
+                          return null;
+                        },
                       ),
-                      keyboardType: TextInputType.text,
-                      maxLength: 6,
-                      textCapitalization: TextCapitalization.characters,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter the code';
-                        }
-                        if (value.trim().length != 6) {
-                          return 'Code must be 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    if (dialogError != null) ...[
-                      const SizedBox(height: 8),
-                      Text(dialogError!,
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 12)),
-                    ]
-                  ],
+                      if (dialogError != null) ...[
+                        const SizedBox(height: 8),
+                        Text(dialogError!,
+                            style:
+                                const TextStyle(color: Colors.red, fontSize: 12)),
+                      ]
+                    ],
+                  ),
                 ),
               ),
               actions: <Widget>[

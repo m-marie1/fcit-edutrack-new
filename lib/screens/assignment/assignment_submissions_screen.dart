@@ -4,6 +4,7 @@ import 'package:fci_edutrack/providers/assignment_provider.dart';
 import 'package:fci_edutrack/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../style/my_app_colors.dart';
+import '../../themes/theme_provider.dart';
 import '../../utils/date_formatter.dart';
 import '../../services/api_service.dart';
 import 'dart:typed_data';
@@ -65,7 +66,9 @@ class _AssignmentSubmissionsScreenState
       body: Consumer<AssignmentProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(
+              color: MyAppColors.primaryColor,
+            ));
           }
 
           final submissions = provider.assignmentSubmissions;
@@ -103,6 +106,7 @@ class _AssignmentSubmissionsScreenState
               }
 
               return Card(
+                color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -112,7 +116,7 @@ class _AssignmentSubmissionsScreenState
                         ? Colors.blue
                             .shade300 // Blue border for edited after grading
                         : (submission.graded
-                            ? Colors.green.shade200
+                            ? Colors.green.shade400
                             : Colors.orange.shade200),
                     width: 1,
                   ),
@@ -162,6 +166,7 @@ class _AssignmentSubmissionsScreenState
                                         .titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
+                                          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                         ),
                                   ),
                                   Text(
@@ -228,7 +233,7 @@ class _AssignmentSubmissionsScreenState
                                   file.contentType.startsWith('image/');
 
                               return Chip(
-                                backgroundColor: Colors.grey[100],
+                                backgroundColor: Provider.of<ThemeProvider>(context).isDark()?Colors.grey.shade700:Colors.grey[100],
                                 avatar: Icon(
                                   isImage ? Icons.image : Icons.attach_file,
                                   size: 16,

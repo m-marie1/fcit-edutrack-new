@@ -310,7 +310,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.primaryColor,
+            color: isDark ? MyAppColors.primaryColor : MyAppColors.primaryColor,
           ),
         ),
         iconTheme: IconThemeData(
@@ -391,8 +391,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   cursorColor: MyAppColors.primaryColor,
                                   decoration: InputDecoration(
                                     labelText: 'Course Code',
-                                    labelStyle: const TextStyle(
-                                        color: MyAppColors.darkBlueColor
+                                    labelStyle:  TextStyle(
+                                        color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                     ),
                                     hintText: 'e.g., CS101',
                                     border: OutlineInputBorder(
@@ -404,8 +404,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.darkBlueColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),
@@ -424,8 +424,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _courseNameController,
                                   decoration: InputDecoration(
                                     labelText: 'Course Name',
-                                    labelStyle:  const TextStyle(
-                                        color: MyAppColors.darkBlueColor
+                                    labelStyle:   TextStyle(
+                                        color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                     ),
                                     hintText:
                                         'e.g., Introduction to Computer Science',
@@ -438,8 +438,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.darkBlueColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),),
@@ -457,8 +457,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _descriptionController,
                                   decoration: InputDecoration(
                                     labelText: 'Description',
-                                    labelStyle: const TextStyle(
-                                        color: MyAppColors.darkBlueColor
+                                    labelStyle:  TextStyle(
+                                        color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                     ),
                                     hintText: 'Course description',
                                     border: OutlineInputBorder(
@@ -470,8 +470,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.darkBlueColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),
@@ -484,21 +484,21 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _startTimeController,
                                   decoration: InputDecoration(
                                     labelText: 'Start Time',
-                                    labelStyle: const TextStyle(
-                                        color: MyAppColors.darkBlueColor
+                                    labelStyle:  TextStyle(
+                                        color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                     ),
                                     hintText: '09:00:00',
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.primaryColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.darkBlueColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),
@@ -522,8 +522,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                   controller: _endTimeController,
                                   decoration: InputDecoration(
                                     labelText: 'End Time',
-                                    labelStyle: const TextStyle(
-                                        color: MyAppColors.darkBlueColor
+                                    labelStyle:  TextStyle(
+                                        color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                                     ),
                                     hintText: '10:30:00',
                                     border: OutlineInputBorder(
@@ -535,8 +535,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                            color: MyAppColors.darkBlueColor,
+                                        borderSide:  BorderSide(
+                                            color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                                             width: 2
                                         )
                                     ),
@@ -643,7 +643,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: isDark
-                              ? MyAppColors.whiteColor
+                              ? MyAppColors.primaryColor
                               : MyAppColors.darkBlueColor,
                         ),
                       ),
@@ -712,7 +712,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: isDark
-                                                          ? Colors.white
+                                                          ? MyAppColors.primaryColor
                                                           : MyAppColors.darkBlueColor,
                                                     ),
                                                   ),
@@ -791,8 +791,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                               .map((day) => Chip(
                                                     label: Text(
                                                       day,
-                                                      style: const TextStyle(
-                                                          fontSize: 12),
+                                                      style:  TextStyle(
+                                                          fontSize: 12,
+                                                          color: isDark?MyAppColors.whiteColor:MyAppColors.darkBlueColor),
                                                     ),
                                                     backgroundColor: isDark
                                                         ? Colors.grey.shade800

@@ -41,13 +41,6 @@ class MyDrawer extends StatelessWidget {
                   : MyAppColors.blackColor,
               thickness: 1.25,
             ),
-            // home tile
-            MyDrawerTile(
-                title: 'H O M E',
-                icon: Icons.home,
-                onTap: () {
-                  Navigator.pop(context);
-                }),
             //Assignment
             MyDrawerTile(
                 title: 'A S S I G N M E N T',

@@ -34,7 +34,7 @@ class AssignmentCard extends StatelessWidget {
         padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
         decoration: BoxDecoration(
-           color: MyAppColors.whiteColor,
+           color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
             borderRadius: BorderRadius.circular(20)),
         width: double.infinity,
         child: Column(
@@ -50,12 +50,12 @@ class AssignmentCard extends StatelessWidget {
                     padding: EdgeInsets.all(
                         MediaQuery.of(context).size.width * 0.019),
                     decoration: BoxDecoration(
-                        color: MyAppColors.whiteColor,
+                        color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                         borderRadius: BorderRadius.circular(5)),
                     child: Text(
                       assignment.title,
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: MyAppColors.darkBlueColor,
+                          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 18),
                     ),

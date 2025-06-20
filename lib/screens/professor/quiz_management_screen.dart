@@ -7,6 +7,7 @@ import '../../providers/quiz_provider.dart'; // Import QuizProvider
 import '../../models/quiz_models.dart';
 import '../../models/course_model.dart'; // Import Course model
 import '../../providers/course_provider.dart'; // Import CourseProvider
+import '../../themes/theme_provider.dart';
 import 'quiz_creation_screen.dart'; // Import the creation screen
 import 'quiz_submissions_screen.dart'; // Import the submissions screen
 import 'quiz_drafts_screen.dart'; // Import the drafts screen
@@ -141,13 +142,13 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title:  Row(
           children: [
-            Icon(Icons.quiz_outlined,color: MyAppColors.darkBlueColor,size: 30,),
+            Icon(Icons.quiz_outlined,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor,size: 30,),
             Text(
               ' Quiz Management',
               style: TextStyle(
-                color: MyAppColors.darkBlueColor,
+                color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor,
                 fontWeight: FontWeight.bold,
               ),
             )
@@ -272,6 +273,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
 
     // Display all quizzes in a single list using ListView.builder
     return RefreshIndicator(
+      color: MyAppColors.primaryColor,
       onRefresh: () async {
         await _fetchQuizzes();
       },
@@ -298,7 +300,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
               '${course.courseName ?? 'Unknown'} (ID: ${quiz.courseId})';
 
           return Card(
-            color: MyAppColors.whiteColor,
+            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
             elevation: 2,
             margin: const EdgeInsets.only(bottom: 16),
             child: Column(
@@ -307,9 +309,10 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                   contentPadding: const EdgeInsets.all(16),
                   title: Text(
                     quiz.title,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
+                      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
                     ),
                   ),
                   subtitle: Column(
@@ -326,6 +329,9 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                             child: Text(
                               'Course: $courseNameDisplay', // Display name and ID
                               overflow: TextOverflow.ellipsis,
+                               style: TextStyle(
+                                 color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                               ),
                             ),
                           ), // Closing parenthesis for Expanded
                         ], // Closing bracket for Row children
@@ -336,11 +342,15 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                           const Icon(Icons.question_answer,
                               size: 16, color: Colors.grey),
                           const SizedBox(width: 4),
-                          Text('Questions: ${quiz.questions.length}'),
+                          Text('Questions: ${quiz.questions.length}',style: TextStyle(
+                            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                          ),),
                           const SizedBox(width: 16),
                           const Icon(Icons.timer, size: 16, color: Colors.grey),
                           const SizedBox(width: 4),
-                          Text('${quiz.durationMinutes} minutes'),
+                          Text('${quiz.durationMinutes} minutes',style: TextStyle(
+                            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                          ),),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -349,7 +359,9 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
                           const Icon(Icons.calendar_today,
                               size: 16, color: Colors.grey),
                           const SizedBox(width: 4),
-                          Text('Ends: ${_formatDateTime(quiz.endDate)}'),
+                          Text('Ends: ${_formatDateTime(quiz.endDate)}',style: TextStyle(
+                            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                          ),),
                         ],
                       ),
                     ],

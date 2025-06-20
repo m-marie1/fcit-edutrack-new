@@ -182,7 +182,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start, // Align titles left
           children: [
             // --- Theme Settings ---
-            Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
+            Text('Appearance', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+            )),
             const SizedBox(height: 8),
             Container(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.09),
@@ -194,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       : Colors.grey.shade300,
                 ),
                 color: themeProvider.isDark()
-                    ? Colors.grey.shade800
+                    ? MyAppColors.secondaryDarkColor
                     : Colors.white, // Background color
               ),
               child: Row(
@@ -217,7 +219,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // --- Password Settings ---
-                  Text('Security', style: Theme.of(context).textTheme.titleMedium),
+                  Text('Security', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: themeProvider.isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                  )),
                   const SizedBox(height: 8),
                   Container(
                     padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.09),
@@ -229,7 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             : Colors.grey.shade300,
                       ),
                       color: themeProvider.isDark()
-                          ? Colors.grey.shade800
+                          ? MyAppColors.secondaryDarkColor
                           : Colors.white, // Background color
                     ),
                     child: Column(
@@ -269,7 +273,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                crossAxisAlignment: CrossAxisAlignment.start,
                children: [
                  Text('Attendance Network',
-                     style: Theme.of(context).textTheme.titleMedium),
+                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                       color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                     )),
                  const SizedBox(height: 8),
                  Container(
                    padding: EdgeInsets.all(
@@ -282,7 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                            : Colors.grey.shade300,
                      ),
                      color: themeProvider.isDark()
-                         ? Colors.grey.shade800
+                         ? MyAppColors.secondaryDarkColor
                          : Colors.white,
                    ),
                    child: _isLoadingBSSID

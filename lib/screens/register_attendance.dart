@@ -78,25 +78,24 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         Provider.of<AttendanceProvider>(context, listen: false);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
-      appBar: AppBar(
+       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          'Record Attendance',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
-          ),
+        title: Row(
+          children: [
+            const Icon(Icons.pin_outlined , size: 30, color: MyAppColors.darkBlueColor,),
+            Text(
+                ' Record Attendance',
+                style: Theme.of(context).textTheme.titleMedium
+            ),
+          ],
         ),
         iconTheme: IconThemeData(
           color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
         ),
       ),
       body: courseProvider.isLoading // Check loading state from CourseProvider
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: MyAppColors.primaryColor,))
           : courseProvider.enrolledCourses.isEmpty
               ? _buildNoCourses(context, isDark) // Pass context
               : _buildCourseList(
@@ -164,19 +163,23 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
     };
 
     return RefreshIndicator(
+      color: MyAppColors.primaryColor,
       onRefresh: refreshAction,
       child: _isLoadingBSSID // Show loading indicator while BSSID loads
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : ListView.builder(
               itemCount: courses.length,
               itemBuilder: (context, index) {
                 final course = courses[index];
                 return Card(
+                  color: MyAppColors.whiteColor,
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(20)),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor:
@@ -184,7 +187,9 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                       child: const Icon(Icons.book_outlined,
                           color: MyAppColors.primaryColor),
                     ),
-                    title: Text(course.courseName),
+                    title: Text(course.courseName,style: TextStyle(
+                      color: MyAppColors.darkBlueColor
+                    ),),
                     subtitle: Text(course.courseCode),
                     // Show indicator in trailing if checking this specific item (optional enhancement)
                     // For now, just disable tap globally
@@ -193,7 +198,7 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.keyboard_arrow_right),
+                        : const Icon(Icons.keyboard_arrow_right,color: MyAppColors.darkBlueColor,),
                     onTap: _isCheckingNetwork // Disable tap while checking
                         ? null
                         : () {
@@ -268,8 +273,6 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
     });
 
     try {
-      // Wrap the entire logic in try/finally to ensure loading state is reset
-      // 1. Request Permissions First
       final hasPermission = await _requestLocationPermission();
       if (!hasPermission) {
         if (mounted) {
@@ -280,38 +283,31 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
             ),
           );
         }
-        // No return here, finally block will handle state reset
       } else {
-        // Only proceed with network check if permission is granted
-        // 2. Perform Network Check (No modal dialog needed)
+
         String? currentBSSID;
         String? errorMessage;
 
         try {
-          // Ensure Wi-Fi is enabled (NetworkInfo().getWifiBSSID() might return null or throw if Wi-Fi is off)
-          final wifiName =
-              await NetworkInfo().getWifiName(); // A quick check if connected
+          final wifiName = await NetworkInfo().getWifiName();
           if (wifiName == null) {
             errorMessage =
                 'Wi-Fi is not connected or enabled. Make sure location services are enabled and Wi-Fi is connected';
           } else {
-            // Attempt to get BSSID
             currentBSSID = await NetworkInfo().getWifiBSSID();
             if (currentBSSID == null) {
               errorMessage =
-                  'Could not retrieve Wi-Fi BSSID. Ensure location services are enabled.';
+              'Could not retrieve Wi-Fi BSSID. Ensure location services are enabled.';
             }
           }
         } on PlatformException catch (e) {
           errorMessage =
-              'Network check failed: ${e.message}. Ensure location services are enabled.';
+          'Network check failed: ${e.message}. Ensure location services are enabled.';
         } catch (e) {
-          // Catch any other unexpected errors
           errorMessage =
-              'An unexpected error occurred while checking the network: ${e.toString()}';
+          'An unexpected error occurred while checking the network: ${e.toString()}';
         }
 
-        // 3. Handle errors encountered during network check
         if (errorMessage != null) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -321,17 +317,19 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
               ),
             );
           }
-          // No return here, finally block will handle state reset
         } else {
-          // 4. Compare BSSID (Case-insensitive) and Proceed
-          if (currentBSSID != null &&
-              currentBSSID.toLowerCase() == _targetBSSID.toLowerCase()) {
-            // Network matches, proceed to code entry dialog
+          // Normalize BSSIDs
+          String normalizeBSSID(String? bssid) =>
+              bssid?.toLowerCase().replaceAll(RegExp(r'[:-]'), '') ?? '';
+
+          final normalizedTarget = normalizeBSSID(_targetBSSID);
+          final normalizedCurrent = normalizeBSSID(currentBSSID);
+
+          if (normalizedCurrent == normalizedTarget) {
             if (mounted) {
               _showCodeEntryDialog(context, course, attendanceProvider);
             }
           } else {
-            // Network does not match or BSSID couldn't be retrieved properly
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -343,10 +341,8 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
             }
           }
         }
-      } // End of else block (permission granted)
+      }
     } finally {
-      // Outer finally block
-      // Ensure loading state is always reset
       if (mounted) {
         setState(() {
           _isCheckingNetwork = false;
@@ -354,6 +350,7 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
       }
     }
   }
+
 
   void _showCodeEntryDialog(BuildContext context, Course course,
       AttendanceProvider attendanceProvider) {
@@ -369,7 +366,10 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text('Record Attendance for ${course.courseCode}'),
+              backgroundColor: MyAppColors.whiteColor,
+              title: Text('Record Attendance for ${course.courseCode}',style: TextStyle(
+                color: MyAppColors.darkBlueColor
+              ),),
               content: Form(
                 key: formKey,
                 child: Column(
@@ -379,10 +379,18 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
                         'Enter the 6-character code provided by your professor:'),
                     const SizedBox(height: 16),
                     TextFormField(
+                      cursorColor: MyAppColors.primaryColor,
                       controller: codeController,
                       decoration: const InputDecoration(
                         labelText: 'Verification Code',
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: MyAppColors.primaryColor
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                          )
+                        ),
                         prefixIcon: Icon(Icons.pin),
                       ),
                       keyboardType: TextInputType.text,
@@ -409,7 +417,9 @@ class _RegisterAttendanceScreenState extends State<RegisterAttendanceScreen> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel',style: TextStyle(
+                    color: MyAppColors.primaryColor
+                  ),),
                   onPressed: () {
                     Navigator.of(dialogContext).pop(); // Close the dialog
                   },

@@ -21,7 +21,7 @@ class MyDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: Provider.of<ThemeProvider>(context).isDark()
           ? MyAppColors.primaryDarkColor
-          : MyAppColors.whiteColor,
+          : MyAppColors.lightBackgroundColor,
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.width * 0.2,
@@ -208,40 +208,40 @@ class MyDrawer extends StatelessWidget {
 
             const Spacer(),
             // logout
-            MyDrawerTile(
-                title: 'L O G O U T',
-                icon: Icons.logout,
-                onTap: () async {
-                  Navigator.pop(context); // Close drawer first
-
-                  // Show confirmation dialog
-                  final shouldLogout = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Log Out'),
-                      content: const Text('Are you sure you want to log out?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Log Out'),
-                        ),
-                      ],
-                    ),
-                  );
-
-                  if (shouldLogout == true) {
-                    final authProvider =
-                        Provider.of<AuthProvider>(context, listen: false);
-                    await authProvider.logout();
-                    // No explicit navigation needed here.
-                    // AuthWrapper will handle navigating to LoginScreen
-                    // when it detects the user is logged out after logout() completes.
-                  }
-                }),
+            // MyDrawerTile(
+            //     title: 'L O G O U T',
+            //     icon: Icons.logout,
+            //     onTap: () async {
+            //       Navigator.pop(context); // Close drawer first
+            //
+            //       // Show confirmation dialog
+            //       final shouldLogout = await showDialog<bool>(
+            //         context: context,
+            //         builder: (context) => AlertDialog(
+            //           title: const Text('Log Out'),
+            //           content: const Text('Are you sure you want to log out?'),
+            //           actions: [
+            //             TextButton(
+            //               onPressed: () => Navigator.of(context).pop(false),
+            //               child: const Text('Cancel'),
+            //             ),
+            //             TextButton(
+            //               onPressed: () => Navigator.of(context).pop(true),
+            //               child: const Text('Log Out'),
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //
+            //       if (shouldLogout == true) {
+            //         final authProvider =
+            //             Provider.of<AuthProvider>(context, listen: false);
+            //         await authProvider.logout();
+            //         // No explicit navigation needed here.
+            //         // AuthWrapper will handle navigating to LoginScreen
+            //         // when it detects the user is logged out after logout() completes.
+            //       }
+            //     }),
           ],
         ),
       ),

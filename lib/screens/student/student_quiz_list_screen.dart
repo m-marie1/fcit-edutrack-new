@@ -8,6 +8,7 @@ import '../../providers/course_provider.dart';
 import '../../models/quiz_models.dart';
 import '../../models/course_model.dart'; // Import Course model
 import '../../style/my_app_colors.dart';
+import '../../themes/theme_provider.dart';
 import 'quiz_taking_screen.dart'; // Import the Quiz Taking Screen
 
 class StudentQuizListScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _StudentQuizListScreenState extends State<StudentQuizListScreen> {
       body: Consumer<QuizProvider>(
         builder: (context, quizProvider, child) {
           return RefreshIndicator(
+            color: MyAppColors.primaryColor,
             onRefresh: _refreshQuizzes,
             // Also consume CourseProvider here to pass it down
             child: Consumer<CourseProvider>(
@@ -137,27 +139,38 @@ class _StudentQuizListScreenState extends State<StudentQuizListScreen> {
             '${course.courseName ?? 'Unknown'} (ID: ${quiz.courseId})';
 
         return Card(
+          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 16),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
             title: Text(
               quiz.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                Text('Course: $courseNameDisplay'), // Display name and ID
+                Text('Course: $courseNameDisplay',style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                ),), // Display name and ID
                 const SizedBox(height: 4),
-                Text('Description: ${quiz.description}'),
+                Text('Description: ${quiz.description}',style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                ),),
                 const SizedBox(height: 4),
-                Text('Questions: ${quiz.questions.length}'),
+                Text('Questions: ${quiz.questions.length}',style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                ),),
                 const SizedBox(height: 4),
-                Text('Duration: ${quiz.durationMinutes} minutes'),
+                Text('Duration: ${quiz.durationMinutes} minutes',style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                ),),
                 const SizedBox(height: 4),
-                Text('Available until: ${_formatDateTime(quiz.endDate)}'),
+                Text('Available until: ${_formatDateTime(quiz.endDate)}',style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                ),),
               ],
             ),
             trailing: ElevatedButton(

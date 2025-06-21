@@ -180,6 +180,7 @@ class _RegisterScreenState extends State<LoginScreen> {
                       style: MyThemeData.lightModeStyle.textTheme.bodySmall!
                           .copyWith(
                         fontSize: 12,
+                        color: isdDark?MyAppColors.whiteColor:MyAppColors.blackColor
                       ),
                     ),
                     InkWell(

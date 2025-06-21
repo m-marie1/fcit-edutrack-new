@@ -229,6 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: MyThemeData.lightModeStyle.textTheme.bodySmall!
                           .copyWith(
                         fontSize: 12,
+                        color:isdDark?MyAppColors.whiteColor:MyAppColors.blackColor
                       ),
                     ),
                     InkWell(
@@ -257,6 +258,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: MyThemeData.lightModeStyle.textTheme.bodySmall!
                           .copyWith(
                         fontSize: 12,
+                        color: isdDark?MyAppColors.whiteColor:MyAppColors.blackColor
                       ),
                     ),
                     InkWell(

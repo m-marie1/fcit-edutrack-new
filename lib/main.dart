@@ -52,6 +52,8 @@ import 'package:fci_edutrack/screens/attendance_history_screen.dart';
 Future<void> main() async {
   // Make main async
   WidgetsFlutterBinding.ensureInitialized();
+  ThemeProvider themeProvider =  ThemeProvider();
+  await themeProvider.getTheme();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -59,7 +61,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        //ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => themeProvider),
         ChangeNotifierProvider(
           create: (context) =>
               AuthProvider()..initialize(), // Initialize AuthProvider here

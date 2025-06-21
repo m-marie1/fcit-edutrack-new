@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../models/quiz_models.dart';
 import '../../providers/quiz_provider.dart'; // Will need a provider method for submission
 import '../../style/my_app_colors.dart';
+import '../../themes/theme_provider.dart';
 
 // Model to hold student's answer for a question
 class StudentAnswer {
@@ -130,12 +131,17 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Submit Quiz?'),
+        backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+        title: const Text('Submit Quiz?',style: TextStyle(
+          color: MyAppColors.primaryColor
+        ),),
         content: const Text('Are you sure you want to submit your answers?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancel',style: TextStyle(
+              color: MyAppColors.primaryColor
+            ),),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -196,8 +202,10 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
       barrierDismissible:
           false, // Prevent dismissing during submission feedback
       builder: (context) => AlertDialog(
-        backgroundColor: MyAppColors.whiteColor,
-        title: Text(timeout ? 'Time Expired!' : 'Quiz Submitted'),
+        backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+        title: Text(timeout ? 'Time Expired!' : 'Quiz Submitted',style: TextStyle(
+          color: MyAppColors.primaryColor
+        ),),
         content: Text(
             (response['message'] ?? // Ensure message is converted to String
                     (timeout
@@ -252,7 +260,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : _startError // Show error message if start failed
               ? Center(
                   child: Padding(
@@ -265,7 +275,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'Error Starting Quiz',
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                            color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
@@ -291,7 +303,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
                       // Progress Indicator
                       Text(
                         'Question $questionNumber of $totalQuestions',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: MyAppColors.primaryColor
+                        ),
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
@@ -305,7 +319,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
                       // Question Text
                       Text(
                         '${currentQuestion.text} (${currentQuestion.points} points)',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.darkBlueColor
+                        ),
                       ),
                       const SizedBox(height: 20),
 
@@ -372,7 +388,9 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
       itemBuilder: (context, index) {
         final option = question.options![index];
         return RadioListTile<int?>(
-          title: Text(option.text),
+          title: Text(option.text,style: TextStyle(
+              color:Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.darkBlueColor
+          ),),
           value: option.id, // Use option ID as the value
           groupValue: currentAnswer.selectedOptionId,
           onChanged: (value) {
@@ -393,7 +411,14 @@ class _QuizTakingScreenState extends State<QuizTakingScreen> {
       initialValue: currentAnswer.textAnswer,
       decoration: const InputDecoration(
         labelText: 'Your Answer',
-        border: OutlineInputBorder(),
+        labelStyle: TextStyle(
+          color: MyAppColors.primaryColor
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: MyAppColors.primaryColor
+          )
+        ),
         hintText: 'Type your answer here...',
       ),
       maxLines: 5,

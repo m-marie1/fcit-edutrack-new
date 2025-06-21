@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fci_edutrack/style/my_app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart'; // Import Provider
-import '../../providers/attendance_provider.dart'; // Import AttendanceProvider
+import '../../providers/attendance_provider.dart';
+import '../../themes/theme_provider.dart'; // Import AttendanceProvider
 
 class AttendanceRecordingScreen extends StatefulWidget {
   static const String routeName = 'attendance_recording';
@@ -447,8 +448,10 @@ class _AttendanceRecordingScreenState extends State<AttendanceRecordingScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: MyAppColors.whiteColor,
-            title: const Text('Session Created'),
+            backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+            title:  Text('Session Created',style: TextStyle(
+               color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+            ),),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -139,7 +139,9 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
           children: [
             Text(
               'Attendance Records',
-              style:Theme.of(context).textTheme.titleMedium
+              style:Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+              )
             ),
             const SizedBox(height: 8),
             Text(
@@ -210,7 +212,7 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               color: isDark
-                                  ? MyAppColors.primaryDarkColor
+                                  ? MyAppColors.secondaryDarkColor
                                   : MyAppColors.whiteColor,
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),

@@ -9,6 +9,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:fci_edutrack/services/api_service.dart';
 
+import '../../themes/theme_provider.dart';
+
 class AssignmentCreateScreen extends StatefulWidget {
   static const String routeName = 'assignment_create_screen';
   const AssignmentCreateScreen({super.key});
@@ -179,6 +181,12 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
         iconTheme: const IconThemeData(
           color: MyAppColors.whiteColor
         ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -187,6 +195,7 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
           child: ListView(
             children: [
               DropdownButtonFormField<Course>(
+                dropdownColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                 decoration: const InputDecoration(
                     labelText: 'Course',
                     labelStyle: TextStyle(
@@ -212,6 +221,9 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             softWrap: false,
+                            style: TextStyle(
+                              color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                            ),
                           ),
                         ))
                     .toList(),
@@ -283,8 +295,11 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(_dueDate != null
                     ? 'Due: ${DateFormat.yMd().add_jm().format(_dueDate!)}'
-                    : 'Select Due Date & Time'),
-                trailing: const Icon(Icons.calendar_today),
+                    : 'Select Due Date & Time',
+                      style: TextStyle(
+                        color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                      ),),
+                trailing:  Icon(Icons.calendar_today,color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor,),
                 onTap: () async {
                   final pickedDate = await showDatePicker(
                     context: context,

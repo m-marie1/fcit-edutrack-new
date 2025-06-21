@@ -75,11 +75,12 @@ class _QuizSubmissionDetailsScreenState
     final isCorrect = pointsAwarded == points;
 
     return Card(
+      color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               questionText,
@@ -131,24 +132,30 @@ class _QuizSubmissionDetailsScreenState
     final isDark = Provider.of<ThemeProvider>(context).isDark();
 
     return Scaffold(
-      backgroundColor:
-          isDark ? MyAppColors.primaryDarkColor : MyAppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
+     appBar: AppBar(
+        backgroundColor: MyAppColors.primaryColor,
         elevation: 0,
         title: Text(
           'Submission Details: ${widget.studentName}',
-          style: TextStyle(
-            color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+          style: const TextStyle(
+            color:  MyAppColors.whiteColor,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: IconThemeData(
-          color: isDark ? MyAppColors.whiteColor : MyAppColors.blackColor,
+        iconTheme: const IconThemeData(
+          color:  MyAppColors.whiteColor ,
         ),
+       leading: IconButton(
+         onPressed: () {
+           Navigator.pop(context);
+         },
+         icon: const Icon(Icons.arrow_back_ios, color: MyAppColors.whiteColor,),
+       ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+        color: MyAppColors.primaryColor,
+      ))
           : _errorMessage != null
               ? Center(
                   child: Column(
@@ -180,16 +187,17 @@ class _QuizSubmissionDetailsScreenState
                             margin: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color:
-                                  isDark ? Colors.grey[800] : Colors.grey[100],
+                                  isDark ? MyAppColors.secondaryDarkColor : MyAppColors.whiteColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
                               children: [
                                 Text(
                                   'Score: ${_submissionDetails!['score']}/${_submissionDetails!['maxScore']}',
-                                  style: const TextStyle(
+                                  style:  const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
+                                    color:  MyAppColors.primaryColor
                                   ),
                                 ),
                                 Text(
@@ -222,6 +230,7 @@ class _QuizSubmissionDetailsScreenState
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
+                                color: MyAppColors.primaryColor
                               ),
                             ),
                           ),

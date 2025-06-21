@@ -170,12 +170,14 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
             ),
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back_ios),
-            ),
+            leading: !_isProfessor
+                ? IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back_ios),
+                  )
+                : null,
             iconTheme: const IconThemeData(color: MyAppColors.darkBlueColor),
             // Add actions for professor mode only
             actions: _isProfessor
@@ -223,6 +225,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                     ? (assignments.isEmpty
                         ? const Center(child: Text('No assignments found.'))
                         : RefreshIndicator(
+                            color: MyAppColors.primaryColor,
                             onRefresh: () async {
                               await Provider.of<AssignmentProvider>(context,
                                       listen: false)
@@ -279,7 +282,9 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return const Center(
-                                        child: CircularProgressIndicator());
+                                        child: CircularProgressIndicator(
+                                      color: MyAppColors.primaryColor,
+                                    ));
                                   }
                                   if (snapshot.hasError) {
                                     return const Center(
@@ -299,10 +304,21 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                             horizontal: 16, vertical: 8),
                                         child: ExpansionTile(
                                           iconColor: MyAppColors.primaryColor,
-                                          title: Text(sub.assignmentTitle ??
-                                              'Assignment'),
+                                          title: Text(
+                                            sub.assignmentTitle ?? 'Assignment',
+                                            style: TextStyle(
+                                                color: isDark
+                                                    ? MyAppColors.primaryColor
+                                                    : MyAppColors
+                                                        .darkBlueColor),
+                                          ),
                                           subtitle: Text(
-                                              'Submitted: ${DateFormatter.formatDateString(sub.submissionDate)}'),
+                                            'Submitted: ${DateFormatter.formatDateString(sub.submissionDate)}',
+                                            style: TextStyle(
+                                                color: isDark
+                                                    ? MyAppColors.whiteColor
+                                                    : MyAppColors.blackColor),
+                                          ),
                                           children: [
                                             Padding(
                                               padding:
@@ -456,66 +472,68 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
           showDialog(
             context: context,
             builder: (ctx) => Dialog(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AppBar(
-                    title: Text(file.fileName),
-                    automaticallyImplyLeading: false,
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(ctx).pop(),
-                      )
-                    ],
-                  ),
-                  InteractiveViewer(
-                    panEnabled: true,
-                    boundaryMargin: const EdgeInsets.all(20),
-                    minScale: 0.5,
-                    maxScale: 4,
-                    child: Image.memory(
-                      imageBytes,
-                      fit: BoxFit.contain,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppBar(
+                      title: Text(file.fileName),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        )
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.open_in_new),
-                    label: const Text('Open in external app'),
-                    onPressed: () async {
-                      try {
-                        // Save to temporary file
-                        final tempDir = await getTemporaryDirectory();
-                        final fileName = file.fileName.isNotEmpty
-                            ? file.fileName
-                            : 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-                        final tempFile = File('${tempDir.path}/$fileName');
-                        await tempFile.writeAsBytes(imageBytes);
+                    InteractiveViewer(
+                      panEnabled: true,
+                      boundaryMargin: const EdgeInsets.all(20),
+                      minScale: 0.5,
+                      maxScale: 4,
+                      child: Image.memory(
+                        imageBytes,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.open_in_new),
+                      label: const Text('Open in external app'),
+                      onPressed: () async {
+                        try {
+                          // Save to temporary file
+                          final tempDir = await getTemporaryDirectory();
+                          final fileName = file.fileName.isNotEmpty
+                              ? file.fileName
+                              : 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+                          final tempFile = File('${tempDir.path}/$fileName');
+                          await tempFile.writeAsBytes(imageBytes);
 
-                        Navigator.of(ctx).pop(); // Close dialog
+                          Navigator.of(ctx).pop(); // Close dialog
 
-                        // Open file
-                        final result = await OpenFile.open(tempFile.path);
-                        if (result.type != ResultType.done) {
+                          // Open file
+                          final result = await OpenFile.open(tempFile.path);
+                          if (result.type != ResultType.done) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Could not open file: ${result.message}')),
+                            );
+                          }
+                        } catch (e) {
+                          print('Error opening image in external app: $e');
                           if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Could not open file: ${result.message}')),
+                            SnackBar(content: Text('Error opening image: $e')),
                           );
                         }
-                      } catch (e) {
-                        print('Error opening image in external app: $e');
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error opening image: $e')),
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                ],
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
             ),
           );

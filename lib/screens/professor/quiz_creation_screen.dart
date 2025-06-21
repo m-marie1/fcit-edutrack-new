@@ -7,6 +7,7 @@ import '../../models/course_model.dart';
 import '../../providers/quiz_provider.dart';
 import '../../providers/course_provider.dart';
 import '../../style/my_app_colors.dart';
+import '../../themes/theme_provider.dart';
 
 class QuizCreationScreen extends StatefulWidget {
   static const String routeName = 'quiz_creation_screen';
@@ -235,7 +236,9 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quiz Details', style: Theme.of(context).textTheme.titleLarge),
+        Text('Quiz Details', style: Theme.of(context).textTheme.titleLarge!.copyWith(
+           color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+        )),
         const SizedBox(height: 16),
         TextFormField(
           cursorColor: MyAppColors.primaryColor,
@@ -285,7 +288,9 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
               return const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: MyAppColors.primaryColor,
+                  ),
                 ),
               );
             }
@@ -306,6 +311,7 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
             }
 
             return DropdownButtonFormField<Course>(
+              dropdownColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
               decoration: const InputDecoration(
                 labelText: 'Course',
                 labelStyle: TextStyle(
@@ -330,6 +336,9 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
                   child: Text(
                     '${course.courseName} (${course.courseCode})',
                     overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: MyAppColors.primaryColor
+                    ),
                   ),
                 );
               }).toList(),
@@ -467,7 +476,9 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Questions (${_questions.length})',
-            style: Theme.of(context).textTheme.titleLarge),
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color:Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+            )),
         const SizedBox(height: 8),
         if (_questions.isEmpty)
           const Padding(
@@ -485,13 +496,18 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
             itemBuilder: (context, index) {
               final question = _questions[index];
               return Card(
-                color: MyAppColors.whiteColor,
+                color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                 margin: const EdgeInsets.only(bottom: 8.0),
                 child: ListTile(
                   title: Text(question.text,
+                      style: TextStyle(
+                        color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                      ),
                       maxLines: 2, overflow: TextOverflow.ellipsis),
                   subtitle: Text(
-                      'Type: ${question.type.name}, Points: ${question.points}'),
+                      'Type: ${question.type.name}, Points: ${question.points}',style: TextStyle(
+                    color: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.whiteColor:MyAppColors.blackColor
+                  ),),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -585,23 +601,48 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: MyAppColors.whiteColor,
-              title: Text(isEditing ? 'Edit Question' : 'Add New Question'),
+              backgroundColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+              title: Text(isEditing ? 'Edit Question' : 'Add New Question',style:
+                const TextStyle(
+                  color: MyAppColors.primaryColor
+                ),),
               content: SingleChildScrollView(
                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
+                      cursorColor: MyAppColors.primaryColor,
                       controller: questionTextController,
-                      decoration: const InputDecoration(labelText: 'Question Text'),
+                      decoration: const InputDecoration(
+                          labelText: 'Question Text',
+                          labelStyle: TextStyle(
+                            color: MyAppColors.primaryColor
+                          ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                          )
+                        )
+                      ),
                     ),
                     TextField(
+                      cursorColor: MyAppColors.primaryColor,
                       controller: pointsController,
-                      decoration: const InputDecoration(labelText: 'Points'),
+                      decoration: const InputDecoration(labelText: 'Points',
+                          labelStyle: TextStyle(
+                            color: MyAppColors.primaryColor
+                          ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                          )
+                        )
+                        ),
                       keyboardType: TextInputType.number,
                     ),
                     DropdownButtonFormField<QuestionType>(
+                      dropdownColor: Provider.of<ThemeProvider>(context).isDark()?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
                       value: selectedType,
                       items: QuestionType.values
                           .where((t) => t != QuestionType.UNKNOWN)
@@ -611,7 +652,17 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
                       onChanged: (value) {
                         if (value != null) setDialogState(() => selectedType = value);
                       },
-                      decoration: const InputDecoration(labelText: 'Question Type'),
+                      decoration: const InputDecoration(
+                          labelText: 'Question Type',
+                          labelStyle: TextStyle(
+                            color: MyAppColors.primaryColor
+                          ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: MyAppColors.primaryColor
+                          )
+                        )
+                      ),
                     ),
                     const SizedBox(height: 12),
                     if (selectedType == QuestionType.MULTIPLE_CHOICE)
@@ -623,11 +674,22 @@ class _QuizCreationScreenState extends State<QuizCreationScreen> {
                       ),
                     if (selectedType == QuestionType.TEXT_ANSWER)
                       TextField(
+                        cursorColor: MyAppColors.primaryColor,
                         controller: textAnswerController,
                         decoration:
-                        const InputDecoration(labelText: 'Correct Answer'),
+                        const InputDecoration(
+                            labelText: 'Correct Answer',
+                            labelStyle: TextStyle(
+                              color: MyAppColors.primaryColor
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: MyAppColors.primaryColor
+                              )
+                            )
+                        ),
                       ),
-                    const SizedBox(height: 20), // علشان تضمني مساحة تحت آخر عنصر
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

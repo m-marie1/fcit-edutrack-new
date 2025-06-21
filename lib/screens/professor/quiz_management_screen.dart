@@ -7,6 +7,7 @@ import '../../providers/quiz_provider.dart'; // Import QuizProvider
 import '../../models/quiz_models.dart';
 import '../../models/course_model.dart'; // Import Course model
 import '../../providers/course_provider.dart'; // Import CourseProvider
+import '../../themes/theme_provider.dart';
 import 'quiz_creation_screen.dart'; // Import the creation screen
 import 'quiz_submissions_screen.dart'; // Import the submissions screen
 import 'quiz_drafts_screen.dart'; // Import the drafts screen
@@ -239,6 +240,7 @@ class _QuizManagementScreenState extends State<QuizManagementScreen> {
 
     // Display all quizzes in a single list using ListView.builder
     return RefreshIndicator(
+      color: MyAppColors.primaryColor,
       onRefresh: () async {
         await _fetchQuizzes();
       },

@@ -79,8 +79,10 @@ class StudentProfileScreen extends StatelessWidget {
                 final shouldLogout = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    backgroundColor: MyAppColors.whiteColor,
-                    title: const Text('Log Out'),
+                    backgroundColor: isDark?MyAppColors.secondaryDarkColor:MyAppColors.whiteColor,
+                    title:  Text('Log Out',style: TextStyle(
+                      color: isDark?MyAppColors.primaryColor:MyAppColors.darkBlueColor
+                    ),),
                     content: const Text('Are you sure you want to log out?'),
                     actions: [
                       TextButton(

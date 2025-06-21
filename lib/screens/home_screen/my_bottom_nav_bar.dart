@@ -183,10 +183,6 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
     } else {
       return const [
         GButton(
-          icon: Icons.home,
-          text: 'Home',
-        ),
-        GButton(
           icon: Icons.pin_outlined, // Changed icon to reflect code entry
           text: 'Attendance',
           textStyle: TextStyle(
@@ -226,7 +222,6 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
       ];
     } else {
       return [
-        const HomeScreen(),
         const RegisterAttendanceScreen(), // Use the updated code entry screen
         const CoursesScreen(),
         const StudentProfileScreen(),

@@ -1,6 +1,4 @@
-# fci_edutrack_new
-
-A new Flutter project.
+Backend: https://github.com/m-marie1/EduTrack-Backend
 
 ## Getting Started
 
